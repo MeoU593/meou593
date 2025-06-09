@@ -1,0 +1,35 @@
+body {
+  background-color: #252836;
+  color: #fff;
+}
+
+.header-container {
+  height: 121px ;
+
+  width: 100%;
+  padding-left: 24px;
+  padding-top: 32px;
+}
+
+.sidebar-component {
+  width: 104px;
+  height: 100vh;
+}
+
+.layout-app-container {
+  display: flex;
+}
+
+.content-container{
+    flex: 1;
+}
+
+.component-change{
+    display: flex;
+    width: 69.28%;
+}
+
+.layout-app-container .content-double{
+  display: flex;
+  min-height: 100vh;
+}

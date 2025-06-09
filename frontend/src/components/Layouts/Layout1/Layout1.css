@@ -1,0 +1,8 @@
+.main-default-layout {
+  background: url("../../../assets/image/pexels-rachel-claire-4577179\ 2.png")
+    center/cover no-repeat;
+  width: 100vw;
+  height: 100vh;
+  background-color: #0f0f0f;
+  color: white;
+}

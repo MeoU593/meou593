@@ -1,0 +1,10 @@
+.layout3{
+    width: 1161px;
+}
+
+.layout-app-container .right-compo{
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

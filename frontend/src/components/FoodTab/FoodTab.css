@@ -1,0 +1,13 @@
+.Foodtab-container{
+  display: flex;
+  height: 2.0625rem;
+  width: 50.9375rem;
+  
+}
+.Foodtab-container .item-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+

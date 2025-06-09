@@ -1,0 +1,398 @@
+.container-payment {
+  position: fixed;
+  right: -814px;
+  top: 0;
+  border-radius: 16px 16px 0px 16px;
+  background: var(--Base-Dark-Bg-2, #1f1d2b);
+  height: 100vh;
+  width: 814px;
+  z-index: 10;
+  transition: all ease-in-out 0.2s;
+}
+
+.container-payment .transition-payment{
+  position: relative;
+}
+
+.container-payment .transition-payment > div:first-of-type{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.container-payment.active{
+  right: 0;
+}
+
+.container-payment .confirmation-payment {
+  border-right: 1px solid #393c49;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.container-payment .back-up-payment {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.container-payment .main-form-payment {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.container-payment .main-form-payment .header-payment {
+  height: 93px;
+  border-bottom: 1px solid #393c49;
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 24px;
+}
+
+.container-payment .main-form-payment .header-payment .box-title-payment {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.container-payment
+  .main-form-payment
+  .header-payment
+  .box-title-payment
+  .title-payment {
+  color: var(--White, #fff);
+  /* Heading/H1 */
+  font-family: Barlow;
+  font-size: 28px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 140%; /* 39.2px */
+}
+
+.container-payment
+  .main-form-payment
+  .header-payment
+  .box-title-payment
+  .title-payment-small {
+  color: var(--Text-Light, #abbbc2);
+  /* Body/Large - Medium */
+  font-family: Barlow;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 140%; /* 22.4px */
+}
+
+.container-payment .main-form-payment .header-payment .add-btn-payment {
+  height: 48px;
+  width: 48px;
+  border-radius: 8px;
+  background: var(--Primary-Color, #ea7c69);
+  margin-top: 9px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.container-payment .main-form-payment .content-payment{
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  max-height: 690px;
+  gap: 24px;
+}
+
+.container-payment .main-form-payment .content-payment::-webkit-scrollbar {
+  width: 3px;
+}
+
+/* Track */
+.container-payment .main-form-payment .content-payment::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+
+/* Handle */
+.container-payment .main-form-payment .content-payment::-webkit-scrollbar-thumb {
+  background: #393c49;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+.container-payment .main-form-payment .content-payment::-webkit-scrollbar-thumb:hover {
+  background: #4a4545;
+}
+
+.container-payment .main-form-payment .footer-payment{
+  height: 39px;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  border-top: 1px solid #393C49;
+}
+
+.container-payment .main-form-payment .footer-payment h3{
+  color: var(--Text-Light, #ABBBC2);
+/* Body / Normal - Regular */
+font-family: Barlow;
+font-size: 14px;
+font-style: normal;
+font-weight: 400;
+line-height: 140%; /* 19.6px */
+}
+
+.container-payment .main-form-payment .footer-payment p{
+  color: var(--White, #FFF);
+text-align: right;
+/* Body / Normal - Medium */
+font-family: Barlow;
+font-size: 14px;
+font-style: normal;
+font-weight: 500;
+line-height: 130%; /* 18.2px */
+}
+
+.container-payment .payment-frame{
+  padding: 24px;
+  margin-top: 43px;
+}
+
+.container-payment .payment-frame .main-form-payment{
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  height: 100%;
+  margin-bottom: 24px;
+}
+
+.container-payment .payment-frame .main-form-payment form{
+  height: 100%;
+}
+
+.payment-frame .main-form-payment .title-form-payment{
+  color: var(--White, #FFF);
+/* Heading/H2 */
+font-family: Barlow;
+font-size: 20px;
+font-style: normal;
+font-weight: 600;
+line-height: 140%; /* 28px */
+}
+
+.payment-frame .main-form-payment .content-payment{
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+}
+
+.payment-frame .content-payment .methods-payment{
+  display: flex;
+  color: var(--White, #FFF);
+/* Body / Normal - Medium */
+font-family: Barlow;
+font-size: 14px;
+font-style: normal;
+font-weight: 500;
+line-height: 130%; /* 18.2px */
+  gap: 8px;
+}
+
+.payment-frame .content-payment .methods-payment .method{
+  width: 101px;
+height: 64px;
+border-radius: 8px;
+border: 1px solid var(--Text-Light, #ABBBC2);
+background: var(--Base-Dark-Bg-1, #252836);
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+position: relative;
+cursor: pointer;
+gap: 2px;
+border: 1px solid var(--Base-Dark-Line, #393C49);
+background: var(--Base-Dark-Bg-2, #1F1D2B);
+}
+
+.payment-frame .content-payment .methods-payment .method img{
+  opacity: 0.7;
+}
+
+.payment-frame .content-payment .methods-payment .method img:nth-child(1){
+  opacity: 0;
+}
+
+.payment-frame .content-payment .methods-payment .method.active-method{
+  border: 1px solid var(--Text-Light, #ABBBC2);
+  background: var(--Base-Dark-Bg-1, #252836);
+}
+
+.payment-frame .content-payment .methods-payment .method.active-method img{
+  opacity: 1;
+}
+
+.payment-frame .content-payment .methods-payment .method img:first-of-type{
+  position: absolute;
+  top: 6px;
+  right: 6px;
+}
+
+.payment-frame .top-form-payment{
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card-name-payment{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-name-payment input{
+  border-radius: 8px;
+border: 1px solid var(--Base-Dark-Line, #393C49);
+background: var(--Base-Form-BG, #2D303E);
+padding: 14px;
+color: var(--Text-Lighter, #E0E6E9);
+/* Body / Normal - Regular */
+font-family: Barlow;
+font-size: 14px;
+font-style: normal;
+font-weight: 400;
+line-height: 140%; /* 19.6px */
+height: 48px;
+outline: none;
+}
+
+.card-name-payment label{
+  color: var(--White, #FFF);
+/* Body / Normal - Medium */
+font-family: Barlow;
+font-size: 14px;
+font-style: normal;
+font-weight: 500;
+line-height: 130%; /* 18.2px */
+}
+
+.payment-frame .bot-form-payment .box-double-input{
+  margin-top: 24px;
+  gap: 13px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #393C49;
+}
+
+.payment-frame .bot-form-payment > .card-name-payment:last-of-type{
+  margin-top: 16px;
+}
+
+.box-btn-payment{
+  display: flex;
+  gap: 8px;
+  margin-top: 300px;
+  margin-bottom: 24px;
+}
+
+.box-btn-payment button{
+  width: 175px;
+  height: 48px;
+  cursor: pointer;
+}
+
+.box-btn-payment .cancel-btn{
+  border-radius: 8px;
+border: 1px solid var(--Primary-Color, #EA7C69);
+color: #ea7c69;
+background-color: transparent;
+/* Button / Normal - Semibold */
+font-family: Barlow;
+font-size: 14px;
+font-style: normal;
+font-weight: 600;
+line-height: 140%; /* 19.6px */
+}
+
+.box-btn-payment .confirm-btn{
+  border-radius: 8px;
+background: var(--Primary-Color, #EA7C69);
+/* Dropshadow */
+box-shadow: 0px 8px 24px 0px rgba(234, 124, 105, 0.40);
+color: #fff;
+/* Button / Normal - Semibold */
+font-family: Barlow;
+font-size: 14px;
+font-style: normal;
+font-weight: 600;
+line-height: 140%; /* 19.6px */
+}
+
+.background-shadow{
+  background: rgba(0, 0, 0, 0.70);
+  height: 100vh;
+  z-index: 1;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.container-confirm-address{
+  border-radius: 16px 16px 0px 16px;
+  background: var(--Base-Dark-Bg-2, #1f1d2b);
+  height: 100vh;
+  width: 814px;
+  z-index: 10;
+  position: absolute;
+  right: -1000px;
+  top: 0;
+  transition: all ease-in-out 0.4s;
+  padding: 64px 52.5px 24px;
+}
+
+.transition-payment .trans-1{
+  position: absolute;
+  transition: all ease-in-out 0.4s;
+  right: 0px;
+  top: 0;
+}
+
+.container-payment.confirm-active .transition-payment .trans-1{
+  right: -814px;
+}
+
+.container-confirm-address.confirm-active{
+  right: 0px;
+}
+
+.container-confirm-address .cancel-btn, .container-confirm-address .confirm-btn{
+  width: 175px;
+  height: 48px;
+}
+
+.container-confirm-address .title-confirm-address{
+  color: var(--White, #FFF);
+/* Heading/H1 */
+font-family: Barlow;
+font-size: 28px;
+font-style: normal;
+font-weight: 600;
+line-height: 140%; /* 39.2px */
+padding-bottom: 24px;
+border-bottom: 1px solid #393C49;
+}
+
+.container-confirm-address form{
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 54px;
+}
+
+.box-btn-payment.form2{
+  margin-top: 300px;
+  justify-content: center;
+}

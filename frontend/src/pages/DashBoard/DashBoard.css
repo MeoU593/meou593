@@ -1,0 +1,111 @@
+.container_dashboard{
+    display: flex;
+    flex-direction: column;
+    /* Add some padding to the container */
+    padding: 24px; 
+}
+
+.container_dashboard .box1 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(1, 144px);
+    height: 200px;
+    gap: 24px;
+    margin-left: 48px;
+}
+
+.container_dashboard .box1 .item {
+    background-color: #1F1D2B;
+    border-radius: 8px;
+    height: 200px;
+    width: 300px;
+    max-width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px;
+}
+
+.container_dashboard .box1 .item .title {
+    font-family: Barlow;
+    font-size: 20px;
+    font-style: normal;
+    color: #ABBBC2;
+    text-align: left;
+}
+
+.container_dashboard .box1 .item .value {
+    font-family: Barlow;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 600;
+    color: #FFF;
+    text-align: left;
+}
+
+.container_dashboard .box1 .item .box1-1 {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.container_dashboard .box1 .item .box1-1 .box1-1-img {
+    width: 24px;
+    height: 24px;
+}
+
+.container_dashboard .box1 .item .box1-1 .box1-1-context {
+    font-family: Barlow;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    color: #FFF;
+    text-align: left;
+}
+
+.container_dashboard .box2 {
+    margin-top: 24px;
+}
+
+.container_dashboard .box2 .title {
+    font-family: Barlow; 
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 600;
+    color: #FFF;
+    text-align: left; /* Align text to the left */
+}
+
+.most-ordered {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px; 
+}
+
+.most-ordered-item {
+    background-color: #1F1D2B;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.most-ordered-item img {
+    width: 100px;
+    height: auto;
+    border-radius: 8px;
+}
+
+.most-ordered-item h3 {
+    font-family: Barlow;
+    font-size: 16px;
+    color: #FFF;
+    margin-top: 10px; 
+}
+
+.most-ordered-item p {
+    font-family: Barlow;
+    font-size: 14px;
+    color: #ABBBC2;
+}

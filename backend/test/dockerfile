@@ -1,0 +1,17 @@
+# USER Buổi 5
+# FROM ubuntu:latest
+
+# RUN apt-get update && apt-get install -y \
+#     sudo && \
+#     rm -rf /var/lib/apt/lists/*
+
+# # Tạo người dùng mới với thư mục chính
+# RUN useradd -m -s /bin/bash appuser
+
+# WORKDIR /app
+# RUN chown -R appuser:appuser /app
+
+# # Chuyển sang người dùng mới
+# USER appuser
+
+# CMD ["bash"]

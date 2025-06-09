@@ -1,0 +1,9 @@
+.notfound-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 90px;
+    font-family: Barlow;
+    font-weight: 700;
+    height: 100vh;
+}

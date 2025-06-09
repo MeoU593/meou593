@@ -1,0 +1,184 @@
+.book-table-wrapper {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    
+  }
+  
+  /* Left Section */
+  .book-table-left {
+    flex: 1;
+    background: url('/src/assets/image/pexels-rachel-claire-4577179\ 2.png') no-repeat
+      center center/cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 50px;
+    color: #fff;
+  }
+  
+  .book-table-left h1 {
+    font-size: 72px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+    color: var(--text-primary, #FACE8D);
+    font-family: "Caveat", cursive;
+  }
+  
+  .book-table-left h2 {
+    font-size: 40px;
+    font-family: "Parkinsans", sans-serif;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  .book-table-left .action-buttons {
+    display: flex;
+    gap: 20px;
+    position:fixed;
+    bottom: 20px;
+    left:10%;
+    width:30%;
+    gap: 20px;
+    aligh-items: center;
+    justify-content: center;
+  }
+  .icon {
+    color:black;
+  }
+  .action-buttons button {
+
+    padding: 20px 20px;
+    border: none;
+    border-radius: 40px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .action-btn {
+    background: #fff;
+    color: #000;
+  }
+  
+  .action-btn1 {
+    background: #ccc;
+    color: #000;
+  }
+  
+  .action-btn2 {
+    background: #111;
+    color: #fff;
+  }
+  
+  .action-btn:hover,
+  .action-btn1:hover,
+  .action-btn2:hover {
+    background: #ddd;
+  }
+  
+  /* Right Section */
+  .book-table-right {
+    width: 50%;
+    height: 100%;
+    padding: 60px 120px; /* Increased padding for left and right */
+    margin: 0 auto;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+    color: var(--text-muted, rgba(255, 255, 255, 0.80));
+/* text/large */
+font-family: "Parkinsans", sans-serif;
+font-size: 20px;
+font-style: normal;
+font-weight: 400;
+line-height: 160%; /* 32px */
+    border-radius: 15px;
+  }
+  
+  .book-table-right h2 {
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--text-default, #FFF);
+/* heading/h2 */
+font-family: "Parkinsans", sans-serif;
+font-size: 40px;
+font-style: normal;
+font-weight: 500;
+line-height: 100%; /* 40px */
+    margin-bottom: 20px;
+    color: #fff;
+    text-align: left;
+  }
+  
+  .book-table-right p {
+    margin-bottom: 30px;
+    font-size: 14px;
+    color: #bbb;
+    line-height: 1.6;
+    text-align: left;
+  }
+  
+  form .input-group {
+    position: relative;
+    margin-bottom: 35px; /* Increased space between input groups */
+    width: 100%;
+  }
+  
+  form .input-group label {
+    margin-bottom: 8px; /* Added spacing between label and input */
+    display: block;
+    font-size: 14px;
+    color: #bbb;
+  }
+  
+  form .input-group input {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border-default, rgba(255, 255, 255, 0.10));
+    color: #fff;
+    font-size: 16px;
+    padding: 12px 15px;
+    outline: none;
+    border-radius: 8px; /* Optional: Rounded corners */
+  }
+  
+  form .input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+  
+  form .input-group input:focus {
+    border: 1px solid #ff715b; /* Highlight on focus */
+  }
+  
+  form .input-row {
+    display: flex;
+    gap: 25px; /* Increased spacing between date and time inputs */
+  }
+  
+  form .input-row .input-group {
+    flex: 1;
+  }
+  
+  .book-table-right form .confirm-btn {
+    width: 100%;
+    padding: 15px;
+    background: #ff715b;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0px 6px 10px rgba(255, 113, 91, 0.3);
+    margin-top: 20px;
+  }
+  
+  form .confirm-btn:hover {
+    background: #e65b48;
+    transform: translateY(-2px);
+  }

@@ -1,0 +1,169 @@
+.container_webpage{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.container_detailFood{
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 1;
+    max-width:1310px;
+    margin-left: 24px;
+}
+
+.container_detailFood .box1{
+    display: flex;
+    flex-direction: column;
+    max-height: 406px;
+    flex-shrink: 3;
+}
+
+.container_detailFood .box2{
+    display: flex;
+    flex-direction: column;
+    height: 406px;
+    margin-left: 35px;
+}
+
+.container_detailFood .box1 .img_main{
+    height: 324px;
+    top: 0;
+    border-radius: 2px;
+    max-width: 449px;
+    left:0;
+}
+
+.container_detailFood .box2 .food{
+    display: inline-flex;
+    flex-direction: column;
+    font: 600 24px Barlow, sans-serif;
+    height: 29px;
+}
+
+.container_detailFood .box2 .price{
+    
+    display: inline-flex;
+    color: #FF9100;
+    font-family: "SF Pro Display";
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-top: 16px;
+}
+
+.container_detailFood .box2 .description{
+    color: #7A7F84;
+    font-family: "SF Pro Display";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    height: 181px;
+    overflow: auto;
+    text-wrap: wrap;
+    margin-top: 16px;
+}
+
+.container_detailFood .box2 .description::-webkit-scrollbar {
+    width: 3px;
+  }
+  
+  /* Track */
+  .container_detailFood .box2 .description::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey;
+    border-radius: 10px;
+  }
+  
+  /* Handle */
+  .container_detailFood .box2 .description::-webkit-scrollbar-thumb {
+    background: #393c49;
+    border-radius: 10px;
+  }
+  
+  /* Handle on hover */
+  .container_detailFood .box2 .description::-webkit-scrollbar-thumb:hover {
+    background: #4a4545;
+  }
+
+.container_detailFood .box2 .add_to_card_button{
+    width: 136px;
+    height: 44px;
+    cursor: pointer;
+}
+
+.container_detailFood .box2 .rating{
+    display: grid;
+    grid-template-columns: repeat(5, 24px);
+    grid-template-rows: repeat(1, 24px);
+    height: 24px;
+    gap: 4px;
+    margin-top: 19px;
+}
+
+.container_detailFood .box2 .rating .star{
+    width: 24px;
+    height: 24px;
+}
+
+.container_detailFood .box1 .sub_img_container{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+    margin-top: 8px;
+}
+
+.container_detailFood .box1 .sub_img_container .sub_img{
+    max-width: 145px;
+    max-height: 74px;
+    border-radius: 2px;
+}
+
+.text_box{
+    display: flex;
+    color: #FFF;
+    font-family: Barlow;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    margin-left: 29px;
+    margin-top: 30px;
+}
+
+.box-btn-composite{
+    display: flex;
+    justify-content: end;
+    align-content: center;
+    gap: 16px;
+}
+
+.quantity-input{
+    display: flex;
+    gap: 8px;
+}
+
+.quantity-btn{
+    all: unset;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    height: 40px;
+    width: 40px;
+    font-family: Barlow;
+    font-size: 20px;
+    background-color: #1f1d2b;
+    border-radius: 8px;
+    border: 2px solid #404046;
+}
+
+.quantity-field{
+    all: unset;
+    font-family: Barlow;
+    font-size: 20px;
+    text-align: center;
+    width: 60px;
+}

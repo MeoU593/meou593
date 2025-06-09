@@ -1,0 +1,24 @@
+.container-left-default {
+  font-family: "Noto Sans";
+  font-size: 96px;
+  font-weight: 600;
+  margin-left: 60px;
+  padding-top: 380px;
+  user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+}
+
+.content-left-default {
+  font-size: 32px;
+  font-style: italic;
+  width: 238px;
+  height: 72px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 4px solid #fff;
+  margin-top: 20px;
+  margin-left: 18px;
+}

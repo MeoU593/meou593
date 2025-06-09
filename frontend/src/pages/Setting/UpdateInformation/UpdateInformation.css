@@ -1,0 +1,103 @@
+.container-product-management .main-form-ui {
+  width: calc(100% - 48px);
+  margin-left: auto;
+  margin-right: auto;
+  flex-grow: 1;
+  display: flex;
+  margin-top: 30px;
+}
+
+.container-product-management .main-form-ui form {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--White, #fff);
+  /* Body / Normal - Medium */
+  font-family: Barlow;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%; /* 18.2px */
+}
+
+.group-btn.group-btn-ui {
+  margin-top: auto;
+}
+
+.container-product-management .main-form-ui .box-inp {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  gap: 8px;
+}
+
+.container-product-management .main-form-ui .grid-2-col {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.container-product-management .main-form-ui .grid-2-col.box-grid {
+  column-gap: 103px;
+}
+
+.container-product-management .main-form-ui .ui-inp{
+    border-radius: 8px;
+border: 1px solid var(--Base-Dark-Line, #393C49);
+background: var(--Base-Form-BG, #2D303E);
+padding: 14px;
+color: var(--Text-Lighter, #E0E6E9);
+/* Body / Normal - Regular */
+font-family: Barlow;
+font-size: 14px;
+font-style: normal;
+font-weight: 400;
+line-height: 140%; /* 19.6px */
+outline: none;
+}
+
+input:-webkit-autofill {
+    color: #E0E6E9 !important;              /* Màu chữ khi autofill */
+    border: 1px solid #393C49;           /* Đường viền khi autofill */
+    -webkit-text-fill-color: #E0E6E9 !important; /* Màu chữ bên trong */
+    transition: background-color 5000s ease-in-out 0s; /* Giữ màu nền khi autofill */
+}
+
+input:-webkit-autofill:focus {
+    background-color: #87898f !important; /* Màu nền khi autofill và focus */
+    color: #E0E6E9 !important;
+    border: 1px solid #393C49;
+}
+
+.container-product-management .group-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 48px;
+    margin-bottom: 24px;
+    margin-top: auto;
+    width: calc(100% - 48px);
+    margin-left: auto;
+    gap: 8px;
+    margin-right: auto;
+  }
+  
+  .container-product-management .group-btn .btn-pro {
+    height: 100%;
+    width: 172px;
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .btn-pro.discard-changes{
+      border: 1px solid #EA7C69;
+      background-color: transparent;
+      color: #EA7C69;
+  }
+  
+  .btn-pro.save-changes{
+      box-shadow: 0px 8px 24px 0px rgba(234, 124, 105, 0.40);
+      background-color: #EA7C69;
+      color: #fff;
+  }

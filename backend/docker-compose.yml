@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+# Build image từ Dockerfile
+  node-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URL=${MONGO_URL}
+    depends_on:
+      mongo:
+        condition: service_healthy
+# Pull image từ Dockerhub
+  mongo:
+    image: mongo:6
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"] # Kiểm tra kết nối mongoDB
+      interval: 60s # Kiểm tra sức khỏe mỗi 60s.
+      timeout: 5s # API sau 5s chưa response, nó sẽ thất bại.
+      retries: 3 # Cho phép 3 lần thất bại trước khi container bị đánh dấu là unhealth
+      start_period: 5s
+# Tạo volume để lưu trữ dữ liệu khi container bị xóa
+volumes:
+  mongo-data:

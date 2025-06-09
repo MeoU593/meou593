@@ -1,0 +1,2605 @@
+# swagger.yaml
+openapi: 3.0.0
+info:
+  title: API Documentation
+  version: 1.0.0
+  description: API documentation for Restaurant management
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+
+paths:
+  /users/register:
+    post:
+      summary: Đăng ký tài khoản
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullname:
+                  type: string
+                  example: "Nguyen Van A"
+                  description: "Tên đầy đủ của người dùng"
+                email:
+                  type: string
+                  example: "example@gmail.com"
+                  description: "Email của người dùng"
+                phone:
+                  type: string
+                  example: "0123456789"
+                  description: "Số điện thoại của người dùng"
+                password:
+                  type: string
+                  example: "password123"
+                  description: "Mật khẩu của người dùng"
+                address:
+                  type: string
+                  example: "123 Đường ABC, TP.HCM"
+                  description: "Địa chỉ của người dùng"
+      responses:
+        '201':
+          description: Đăng ký thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Đăng ký thành công!"
+                  user:
+                    type: object
+                    properties:
+                      fullName:
+                        type: string
+                        example: "Nguyen Van A"
+                      email:
+                        type: string
+                        example: "example@gmail.com"
+                      role:
+                        type: string
+                        example: "user"
+                  cart:
+                    type: object
+                    properties:
+                      user_id:
+                        type: string
+                        example: "60c72b2f4f1a4c3d88a1eae2"
+                      dishes:
+                        type: array
+                        items:
+                          type: object
+                        description: "Giỏ hàng của người dùng"
+                  token:
+                    type: string
+                    example: "jwt-token-example"
+        '400':
+          description: Email đã được sử dụng
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Email đã được sử dụng."
+        '500':
+          description: Đăng ký thất bại
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Đăng ký thất bại!"
+                  error:
+                    type: string
+                    example: "Error details"
+  /users/login:
+    post:
+      summary: Đăng nhập
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "example@gmail.com"
+                  description: "Email đăng nhập của người dùng"
+                password:
+                  type: string
+                  example: "password123"
+                  description: "Mật khẩu của người dùng"
+      responses:
+        '200':
+          description: Đăng nhập thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Đăng nhập thành công!"
+                  user:
+                    type: string
+                    example: "Nguyen Van A"
+                  token:
+                    type: string
+                    example: "jwt-token-example"
+                  cart:
+                    type: object
+                    properties:
+                      customer_id:
+                        type: string
+                        example: "60c72b2f4f1a4c3d88a1eae2"
+                      dishes:
+                        type: array
+                        items:
+                          type: object
+                        description: "Thông tin các món ăn trong giỏ hàng"
+        '400':
+          description: Lỗi xác thực
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Email hoặc mật khẩu đăng nhập không chính xác "
+        '500':
+          description: Lỗi server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Có lỗi xảy ra"
+                  error:
+                    type: string
+                    example: "Chi tiết lỗi"
+  /users/detail:
+    get:
+      summary: Lấy thông tin chi tiết người dùng
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Lấy thông tin người dùng thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Thông tin user!"
+                  user:
+                    type: object
+                    properties:
+                      fullname:
+                        type: string
+                        example: "Nguyen Van A"
+                      email:
+                        type: string
+                        example: "example@gmail.com"
+                      phone:
+                        type: string
+                        example: "0123456789"
+                      address:
+                        type: string
+                        example: "123 Đường ABC, TP.HCM"
+                      role:
+                        type: string
+                        example: "user"
+                      token:
+                        type: string
+                        example: "jwt-token-example"
+        '404':
+          description: Người dùng không tồn tại
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Người dùng không tồn tại."
+        '400':
+          description: Có lỗi xảy ra khi lấy thông tin người dùng
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error!"
+                  error:
+                    type: string
+                    example: "Chi tiết lỗi"
+
+  /users/logout:
+    get:
+      summary: Đăng xuất
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Đăng xuất thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Đăng xuất thành công!"
+        '400':
+          description: Có lỗi xảy ra khi đăng xuất
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error!"
+                  error:
+                    type: string
+                    example: "Chi tiết lỗi"
+
+  /users/edit:
+    patch:
+      summary: Cập nhật thông tin mới người dùng
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullname:
+                  type: string
+                  example: "Nguyen Van B"
+                  description: "Tên đầy đủ mới của người dùng"
+                phone:
+                  type: string
+                  example: "0987654321"
+                  description: "Số điện thoại mới của người dùng"
+                address:
+                  type: string
+                  example: "456 Đường XYZ, TP.HCM"
+                  description: "Địa chỉ mới của người dùng"
+                # Có thể thêm các trường khác nếu cần cập nhật
+      responses:
+        '200':
+          description: Cập nhật thông tin thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Cập nhật thông tin thành công!"
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "60c72b2f4f1a4c3d88a1eae2"
+                      fullname:
+                        type: string
+                        example: "Nguyen Van B"
+                      email:
+                        type: string
+                        example: "newemail@gmail.com"
+                      phone:
+                        type: string
+                        example: "0987654321"
+                      address:
+                        type: string
+                        example: "456 Đường XYZ, TP.HCM"
+                      role:
+                        type: string
+                        example: "user"
+                      token:
+                        type: string
+                        example: "jwt-token-example"
+        '500':
+          description: Có lỗi xảy ra khi cập nhật thông tin
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error!"
+                  error:
+                    type: string
+                    example: "Chi tiết lỗi"
+
+  /users/requestOtp:
+    post:
+      summary: Yêu cầu mã OTP
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "example@gmail.com"
+                  description: "Email của người dùng yêu cầu OTP"
+      responses:
+        '200':
+          description: Mã OTP đã được gửi thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "OTP has been sent"
+        '400':
+          description: Lỗi khi yêu cầu OTP, ví dụ email không tồn tại hoặc lỗi gửi OTP
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Email does not exist! or Error sending OTP"
+                  error:
+                    type: string
+                    example: "Chi tiết lỗi"
+
+  /users/verify_Otp:
+    post:
+      summary: Xác minh OTP và thay đổi mật khẩu
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "example@gmail.com"
+                  description: "Email của người dùng yêu cầu thay đổi mật khẩu"
+                otp:
+                  type: string
+                  example: "123456"
+                  description: "Mã OTP được gửi đến email"
+                newPassword:
+                  type: string
+                  example: "newPassword123"
+                  description: "Mật khẩu mới người dùng muốn thay đổi"
+      responses:
+        '200':
+          description: OTP hợp lệ và mật khẩu đã được thay đổi thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Otp is valid and password has been changed"
+        '400':
+          description: Lỗi xác minh OTP hoặc thông tin không hợp lệ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User does not exist or Invalid OTP"
+        '500':
+          description: Lỗi khi xử lý yêu cầu
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error when determining OTP"
+                  
+
+  /menu:
+    get:
+      summary: Lấy danh sách món ăn hiển thị (menu)
+      tags:
+        - Menu
+      parameters:
+        - name: keyword
+          in: query
+          description: Từ khóa để tìm kiếm món ăn
+          required: false
+          schema:
+            type: string
+            example: "pizza"
+        - name: sortKey
+          in: query
+          description: Tên trường để sắp xếp
+          required: false
+          schema:
+            type: string
+            example: "price"
+        - name: sortValue
+          in: query
+          description: Hướng sắp xếp (asc hoặc desc)
+          required: false
+          schema:
+            type: string
+            example: "desc"
+        - name: page
+          in: query
+          description: Trang hiện tại để phân trang
+          required: false
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Thành công, trả về danh sách món ăn
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Success!"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          example: "60d2d0f54d24242698bcf4b1"
+                        name:
+                          type: string
+                          example: "Pizza Margherita"
+                        slug:
+                          type: string
+                          example: "pizza-margherita"
+                        description:
+                          type: string
+                          example: "Pizza with tomato, mozzarella, and basil"
+                        price:
+                          type: number
+                          format: float
+                          example: 10.5
+                        like:
+                          type: integer
+                          example: 150
+                        imageUrl:
+                          type: string
+                          example: "http://example.com/image.jpg"
+                        category:
+                          type: string
+                          example: "Main Course"
+                        slugCategory:
+                          type: string
+                          example: "main-course"
+                        
+        '400':
+          description: Lỗi khi xử lý yêu cầu, parameters không hợp lệ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid parameters"
+        '500':
+          description: Lỗi server khi truy vấn cơ sở dữ liệu
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Server error"
+
+
+  /menu/{slugCategory}:
+    get:
+      summary: Lấy danh sách món ăn theo danh mục
+      tags:
+        - Menu
+      parameters:
+        - name: slugCategory
+          in: path
+          required: true
+          description: "Slug của danh mục món ăn"
+          schema:
+            type: string
+            example: "main-course"
+        - name: keyword
+          in: query
+          description: Từ khóa để tìm kiếm món ăn
+          required: false
+          schema:
+            type: string
+            example: "pizza"
+        - name: sortKey
+          in: query
+          description: Tên trường để sắp xếp, ví dụ price
+          required: false
+          schema:
+            type: string
+            example: "price"
+        - name: sortValue
+          in: query
+          description: Hướng sắp xếp (asc hoặc desc)
+          required: false
+          schema:
+            type: string
+            example: "desc"
+        - name: page
+          in: query
+          description: Trang hiện tại để phân trang
+          required: false
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Thành công, trả về danh sách món ăn trong danh mục
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Success!"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          example: "60d2d0f54d24242698bcf4b1"
+                        name:
+                          type: string
+                          example: "Pizza Margherita"
+                        slug:
+                          type: string
+                          example: "pizza-margherita"
+                        description:
+                          type: string
+                          example: "Pizza with tomato, mozzarella, and basil"
+                        price:
+                          type: number
+                          format: float
+                          example: 10.5
+                        like:
+                          type: integer
+                          example: 150
+                        imageUrl:
+                          type: string
+                          example: "http://example.com/image.jpg"
+                        category:
+                          type: string
+                          example: "Main Course"
+                        slugCategory:
+                          type: string
+                          example: "main-course"
+        '400':
+          description: Lỗi khi xử lý yêu cầu, ví dụ tham số không hợp lệ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid parameters"
+        '500':
+          description: Lỗi server khi truy vấn cơ sở dữ liệu
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Server error"
+
+  /menu/detail/{slug}:
+    get:
+      summary: Lấy chi tiết món ăn theo slug(tên của món ăn)
+      tags:
+        - Menu
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          description: "Slug của món ăn"
+          schema:
+            type: string
+            example: "pizza-margherita"
+      responses:
+        '200':
+          description: Thành công, trả về thông tin chi tiết món ăn
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    example: "60d2d0f54d24242698bcf4b1"
+                  name:
+                    type: string
+                    example: "Pizza Margherita"
+                  slug:
+                    type: string
+                    example: "pizza-margherita"
+                  description:
+                    type: string
+                    example: "Pizza with tomato, mozzarella, and basil"
+                  price:
+                    type: number
+                    format: float
+                    example: 10.5
+                  like:
+                    type: integer
+                    example: 150
+                  imageUrl:
+                    type: string
+                    example: "http://example.com/image.jpg"
+                  category:
+                    type: string
+                    example: "Main Course"
+                  slugCategory:
+                    type: string
+                    example: "main-course"
+        '404':
+          description: Không tìm thấy món ăn với slug đã cho
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Dish not found"
+        '500':
+          description: Lỗi server khi truy vấn cơ sở dữ liệu
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Server error"
+
+  /menu/top-rated:
+    patch:
+      summary: Get top-rated dishes
+      tags:
+        - Menu
+      description: Lấy danh sách 10 món ăn có rating cao nhất, được sắp xếp giảm dần theo rating.
+      responses:
+        200:
+          description: Danh sách 10 món ăn có rating cao nhất.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Thông báo kết quả
+                    example: "Danh sách món ăn theo rating"
+                  data:
+                    type: array
+                    description: Danh sách món ăn
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: Tên món ăn
+                          example: "Mì Quảng"
+                        description:
+                          type: string
+                          description: Mô tả món ăn
+                          example: "Món mì truyền thống của miền Trung"
+                        price:
+                          type: number
+                          description: Giá món ăn
+                          example: 50000
+                        category:
+                          type: string
+                          description: Danh mục món ăn
+                          example: "Món chính"
+                        imageUrl:
+                          type: string
+                          description: URL hình ảnh món ăn
+                          example: "https://example.com/image.jpg"
+                        rating:
+                          type: number
+                          description: Điểm đánh giá món ăn
+                          example: 4.8
+        500:
+          description: Lấy danh sách món ăn thất bại
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Thông báo lỗi
+                    example: "Lấy danh sách món ăn thất bại"
+                  error:
+                    type: string
+                    description: Chi tiết lỗi
+                    example: "Internal Server Error"
+
+
+  /table/create:
+    post:
+      summary: Đặt bàn cho khách hàng
+      tags:
+        - TableBooking
+      requestBody:
+        description: Thông tin đặt bàn
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bookingDate:
+                  type: string
+                  format: date
+                  example: "10/11/2024"
+                bookingTime:
+                  type: string
+                  format: date-time
+                  example: "22:00:00"
+                numberofSeats:
+                  type: integer
+                  example: 4
+      responses:
+        '201':
+          description: Đặt bàn thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Chúc mừng [User] đã đặt bàn thành công"
+                  data:
+                    type: object
+                    properties:
+                      customer_id:
+                        type: string
+                        example: "60d2d0f54d24242698bcf4b1"
+                      bookingDate:
+                        type: string
+                        example: "10/11/2024"
+                      bookingTime:
+                        type: string
+                        example: "22:00:00"
+                      numberofSeats:
+                        type: integer
+                        example: 4
+                      tableId:
+                        type: string
+                        example: "60d2d0f54d24242698bcf4b2"
+        '400':
+          description: Không còn bàn nào có sẵn để đặt
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Không còn bàn nào có sẵn để đặt!"
+        '500':
+          description: Lỗi server khi tạo đặt bàn
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Đặt bàn thất bại"
+                  error:
+                    type: string
+                    example: "Lỗi kết nối cơ sở dữ liệu"
+
+
+  /cart:
+    get:
+      summary: Lấy chi tiết giỏ hàng của người dùng
+      tags:
+        - Cart
+      responses:
+        '200':
+          description: Thành công lấy thông tin chi tiết giỏ hàng
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Success!"
+                  cart:
+                    type: object
+                    properties:
+                      dishes:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "Món ăn A"
+                            price:
+                              type: number
+                              format: float
+                              example: 150000
+                            quantity:
+                              type: integer
+                              example: 2
+                            category:
+                              type: string
+                              example: "Món chính"
+                            imageUrl:
+                              type: string
+                              example: "https://example.com/image.jpg"
+        '400':
+          description: Lỗi khi lấy thông tin giỏ hàng
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error!"
+                  error:
+                    type: string
+                    example: "Không tìm thấy giỏ hàng"
+
+
+  /cart/add:
+    post:
+      summary: Thêm món ăn vào giỏ hàng
+      tags:
+        - Cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dishId:
+                  type: string
+                  description: ID của món ăn cần thêm vào giỏ hàng
+                  example: "60c72b2f5f9b4e4b4c8b4567"
+                quantity:
+                  type: integer
+                  description: Số lượng món ăn cần thêm
+                  example: 2
+      responses:
+        '200':
+          description: Thành công thêm món ăn vào giỏ hàng
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Thêm sản phẩm vào giỏ hàng thành công!"
+                  cart:
+                    type: object
+                    properties:
+                      dishes:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "Món ăn A"
+                            price:
+                              type: number
+                              format: float
+                              example: 150000
+                            quantity:
+                              type: integer
+                              example: 2
+                            category:
+                              type: string
+                              example: "Món chính"
+                            imageUrl:
+                              type: string
+                              example: "https://example.com/image.jpg"
+        '400':
+          description: Lỗi khi thêm món ăn vào giỏ hàng
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error!"
+                  error:
+                    type: string
+                    example: "Không tìm thấy món ăn hoặc có lỗi khi thêm vào giỏ hàng"
+
+
+  /cart/update/{dish_id}:
+    post:
+      summary: Cập nhật số lượng món ăn trong giỏ hàng
+      tags:
+        - Cart
+      parameters:
+        - name: dish_id
+          in: path
+          required: true
+          description: ID của món ăn cần cập nhật số lượng
+          schema:
+            type: string
+          example: "60c72b2f5f9b4e4b4c8b4567"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+                  description: Số lượng mới của món ăn
+                  example: 3
+      responses:
+        '200':
+          description: Cập nhật số lượng món ăn trong giỏ hàng thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Cập nhật số lượng cho Món ăn A thành công!"
+        '400':
+          description: Lỗi khi cập nhật món ăn
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error!"
+                  error:
+                    type: string
+                    example: "Có lỗi khi cập nhật số lượng món ăn"
+
+  /order:
+    post:
+      summary: Create Order
+      tags:
+        - Orders
+      description: Tạo đơn hàng mới từ giỏ hàng của người dùng.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                orderType:
+                  type: string
+                  enum: ["Dine In", "Delivery"]
+                  description: Loại đơn hàng
+                  example: "Delivery"
+                address:
+                  type: string
+                  description: Địa chỉ giao hàng (bắt buộc với Delivery)
+                  example: "123 Main St."
+                deliveryTime:
+                  type: string
+                  description: Thời gian giao hàng (bắt buộc với Delivery)
+                  example: "2025-01-02T12:00:00Z"
+      responses:
+        200:
+          description: Tạo đơn hàng thành công.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Success!"
+                  data:
+                    $ref: "#/components/schemas/Order"
+        400:
+          description: Lỗi dữ liệu đầu vào không hợp lệ.
+        500:
+          description: Lỗi hệ thống.
+
+  order/rate/{orderCode}:
+    patch:
+      tags:
+        - Orders
+      summary: "Đánh giá đơn hàng"
+      description: "API để khách hàng đánh giá đơn hàng đã thanh toán."
+      parameters:
+        - name: orderCode
+          in: path
+          required: true
+          description: "Mã đơn hàng"
+          schema:
+            type: string
+        - name: rating
+          in: body
+          required: true
+          description: "Đánh giá của khách hàng (1-5)"
+          schema:
+            type: object
+            properties:
+              rating:
+                type: integer
+                format: int32
+                minimum: 1
+                maximum: 5
+                example: 5
+      responses:
+        200:
+          description: "Đánh giá thành công"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    description: "Chi tiết đơn hàng đã được đánh giá"
+        400:
+          description: "Dữ liệu không hợp lệ (rating không nằm trong khoảng 1-5)"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        404:
+          description: "Không tìm thấy đơn hàng hoặc đơn hàng không hợp lệ"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        500:
+          description: "Lỗi từ server"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+
+
+  /order/payment:
+    post:
+      summary: Create Payment Link
+      tags:
+        - Payments
+      description: Tạo liên kết thanh toán cho đơn hàng.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  description: Tổng số tiền thanh toán.
+                  example: 5000
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Tên món ăn.
+                        example: "Mì tôm"
+                      quantity:
+                        type: integer
+                        description: Số lượng món ăn.
+                        example: 2
+                      price:
+                        type: number
+                        description: Giá mỗi món ăn.
+                        example: 2500
+                orderType:
+                  type: string
+                  enum: ["Dine In", "Delivery"]
+                  description: Loại đơn hàng
+                  example: "Delivery"
+                address:
+                  type: string
+                  description: Địa chỉ giao hàng (bắt buộc với Delivery)
+                  example: "123 Main St."
+                deliveryTime:
+                  type: string
+                  description: Thời gian giao hàng (bắt buộc với Delivery)
+                  example: "2025-01-02T12:00:00Z"
+      responses:
+        200:
+          description: Tạo liên kết thanh toán thành công.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Payment link created successfully"
+                  paymentLinkRes:
+                    $ref: "#/components/schemas/PaymentLinkResponse"
+                  order:
+                    $ref: "#/components/schemas/Order"
+        400:
+          description: Dữ liệu đầu vào không hợp lệ.
+        500:
+          description: Lỗi hệ thống.
+
+  /order/payment/status/{paymentId}:
+    get:
+      summary: Get status of a payment
+      tags:
+        - Payments
+      description: Kiểm tra trạng thái thanh toán của một liên kết thanh toán.
+      parameters:
+        - name: paymentId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID liên kết thanh toán.
+      responses:
+        200:
+          description: Trạng thái thanh toán được kiểm tra thành công.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Payment status checked successfully"
+                  status:
+                    type: string
+                    description: Trạng thái thanh toán.
+                    example: "PAID"
+                  amount:
+                    type: number
+                    description: Số tiền thanh toán.
+                    example: 5000
+                  data:
+                    $ref: "#/components/schemas/PaymentLink"
+        500:
+          description: Lỗi hệ thống.
+
+  /order/payment/status/success/{paymentId}:
+    patch:
+      summary: Update Payment Success
+      tags:
+        - Payments
+      description: Cập nhật trạng thái thành công cho thanh toán.
+      parameters:
+        - name: paymentId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID liên kết thanh toán.
+      responses:
+        200:
+          description: Cập nhật trạng thái thành công.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Payment status checked successfully"
+                  status:
+                    type: string
+                    description: Trạng thái thanh toán.
+                    example: "PAID"
+                  amount:
+                    type: number
+                    description: Số tiền thanh toán.
+                    example: 5000
+                  data:
+                    $ref: "#/components/schemas/PaymentLink"
+        500:
+          description: Lỗi hệ thống.
+
+  /order/payment/cancelled/{paymentId}:
+    delete:
+      summary: Cancel Payment
+      tags:
+        - Payments
+      description: Hủy thanh toán với ID liên kết thanh toán cụ thể.
+      parameters:
+        - name: paymentId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID liên kết thanh toán.
+      responses:
+        200:
+          description: Hủy thanh toán thành công.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Hủy đơn thành công"
+                  cancelledPaymentLink:
+                    $ref: "#/components/schemas/PaymentLink"
+        500:
+          description: Lỗi hệ thống.
+
+
+
+
+
+
+
+  /admin/dish/create:
+    post:
+      summary: Thêm món ăn mới
+      description: Thêm một món ăn mới vào hệ thống quản lý nhà hàng.
+      tags:
+        - Admin Dish
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Cocacola"
+                  description: Tên của món ăn
+                description:
+                  type: string
+                  example: "Nước ngọt"
+                  description: Mô tả của món ăn
+                price:
+                  type: number
+                  example: 3
+                  description: Giá của món ăn
+                category:
+                  type: string
+                  example: "Drink"
+                  description: Danh mục của món ăn
+                file:
+                  type: string
+                  format: binary
+                  description: File ảnh của món ăn
+      responses:
+        '201':
+          description: Món ăn được thêm thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Sản phẩm Cocacola được thêm thành công"
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "Cocacola"
+                      description:
+                        type: string
+                        example: "Nước ngọt"
+                      price:
+                        type: number
+                        example: 3
+                      category:
+                        type: string
+                        example: "Drink"
+                      imageUrl:
+                        type: string
+                        example: "https://res.cloudinary.com/yourcloud/image/upload/v1731144323/vmk2t4iz1pdqqrh55mf9.jpg"
+                      like:
+                        type: number
+                        example: 0
+                      deleted:
+                        type: boolean
+                        example: false
+                      _id:
+                        type: string
+                        example: "672f2a84599a4f9a3dc62d54"
+        '400':
+          description: Yêu cầu không hợp lệ, ví dụ thiếu file hoặc món ăn đã tồn tại
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Món ăn đã tồn tại"
+        '500':
+          description: Thêm món ăn thất bại do lỗi server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Thêm món ăn thất bại!"
+                  error:
+                    type: string
+                    example: "Internal server error message"
+
+
+  /admin/dish/edit/{slugDish}:
+    patch:
+      summary: Cập nhật thông tin món ăn
+      description: Cho phép admin cập nhật thông tin của một món ăn dựa trên `slugDish`.
+      tags:
+        - Admin Dish
+      parameters:
+        - name: slugDish
+          in: path
+          required: true
+          description: "Slug của món ăn cần cập nhật"
+          schema:
+            type: string
+            example: "ga-ran"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  example: "Món gà rán giòn tan với vị mới"
+                  description: "Mô tả mới của món ăn"
+                price:
+                  type: number
+                  example: 10
+                  description: "Giá mới của món ăn"
+                category:
+                  type: string
+                  example: "Main Course"
+                  description: "Loại món ăn mới"
+                  enum: ["Appetizer", "Main Course", "Dessert", "Drink"]
+                imageUrl:
+                  type: string
+                  example: "https://link-to-updated-image.com/image.jpg"
+                  description: "URL hình ảnh mới của món ăn"
+      responses:
+        200:
+          description: Cập nhật món ăn thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Cập nhật món ăn thành công!"
+                  dish:
+                    type: object
+                    properties:
+                      description:
+                        type: string
+                        example: "Món gà rán giòn tan với vị mới"
+                      price:
+                        type: number
+                        example: 55000
+                      category:
+                        type: string
+                        example: "Main Course"
+                      imageUrl:
+                        type: string
+                        example: "https://link-to-updated-image.com/image.jpg"
+        404:
+          description: Món ăn không tồn tại
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Món ăn không tồn tại!"
+        501:
+          description: Lỗi trong quá trình cập nhật
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error!"
+                  error:
+                    type: string
+                    example: "Mô tả lỗi"
+
+  /admin/dish/list:
+    get:
+      summary: Lấy danh sách các món ăn
+      description: Trả về danh sách tất cả các món ăn chưa bị xóa trong hệ thống.
+      tags:
+        - Admin Dish
+      responses:
+        200:
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: "Success!"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: "Gà rán"
+                          description: "Tên món ăn"
+                        slug:
+                          type: string
+                          example: "ga-ran"
+                          description: "Slug của món ăn"
+                        description:
+                          type: string
+                          example: "Món gà rán giòn tan"
+                          description: "Mô tả món ăn"
+                        price:
+                          type: number
+                          example: 50000
+                          description: "Giá của món ăn"
+                        category:
+                          type: string
+                          example: "Main Course"
+                          description: "Loại món ăn"
+                          enum: ["Appetizer", "Main Course", "Dessert", "Drink"]
+                        imageUrl:
+                          type: string
+                          example: "https://link-to-image.com/image.jpg"
+                          description: "URL hình ảnh món ăn"
+                        like:
+                          type: integer
+                          example: 12
+                          description: "Số lượng lượt thích"
+                        deleted:
+                          type: boolean
+                          example: false
+                          description: "Trạng thái đã xóa hay chưa"
+        400:
+          description: Lỗi trong quá trình lấy danh sách món ăn
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: "Error!"
+                  error:
+                    type: string
+                    example: "Mô tả lỗi"
+  /admin/dish/detail/{slugDish}:
+    get:
+      summary: Lấy chi tiết món ăn theo slug
+      description: Trả về chi tiết món ăn dựa trên slug của món ăn, bao gồm tên, mô tả, số lượt thích, giá, hình ảnh và loại món ăn.
+      tags:
+        - Admin Dish
+      parameters:
+        - name: slugDish
+          in: path
+          description: Slug của món ăn
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Thành công, trả về chi tiết món ăn
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Success!"
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "Gà rán"
+                        description: "Tên món ăn"
+                      slug:
+                        type: string
+                        example: "ga-ran"
+                        description: "Slug của món ăn"
+                      description:
+                        type: string
+                        example: "Món gà rán giòn tan"
+                        description: "Mô tả món ăn"
+                      price:
+                        type: number
+                        example: 50000
+                        description: "Giá của món ăn"
+                      category:
+                        type: string
+                        example: "Main Course"
+                        description: "Loại món ăn"
+                        enum: ["Appetizer", "Main Course", "Dessert", "Drink"]
+                      imageUrl:
+                        type: string
+                        example: "https://link-to-image.com/image.jpg"
+                        description: "URL hình ảnh món ăn"
+                      like:
+                        type: integer
+                        example: 12
+                        description: "Số lượng lượt thích"
+        400:
+          description: Lỗi khi không tìm thấy món ăn
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error!"
+                  error:
+                    type: string
+                    example: "Không tìm thấy món ăn với slug này."
+
+  /admin/dish/delete/{slugDish}:
+    delete:
+      summary: Xóa món ăn theo slug
+      description: Đánh dấu món ăn là đã xóa bằng cách thiết lập trường `deleted` thành `true` trong cơ sở dữ liệu.
+      tags:
+        - Admin Dish
+      parameters:
+        - name: slugDish
+          in: path
+          description: Slug của món ăn cần xóa
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Thành công, trả về món ăn đã bị xóa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Xóa món ăn thành công!"
+                  dish:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "Gà rán"
+                        description: "Tên món ăn"
+                      slug:
+                        type: string
+                        example: "ga-ran"
+                        description: "Slug của món ăn"
+                      description:
+                        type: string
+                        example: "Món gà rán giòn tan"
+                        description: "Mô tả món ăn"
+                      price:
+                        type: number
+                        example: 50000
+                        description: "Giá của món ăn"
+                      category:
+                        type: string
+                        example: "Main Course"
+                        description: "Loại món ăn"
+                        enum: ["Appetizer", "Main Course", "Dessert", "Drink"]
+                      imageUrl:
+                        type: string
+                        example: "https://link-to-image.com/image.jpg"
+                        description: "URL hình ảnh món ăn"
+                      like:
+                        type: integer
+                        example: 12
+                        description: "Số lượng lượt thích"
+                      deleted:
+                        type: boolean
+                        example: true
+                        description: "Trạng thái món ăn (đã bị xóa)"
+        400:
+          description: Lỗi khi không tìm thấy món ăn hoặc không thể xóa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error!"
+                  error:
+                    type: string
+                    example: "Không tìm thấy món ăn để xóa."
+
+
+
+  /admin/accounts:
+    get:
+      summary: Get all accounts
+      tags:
+        - Quản lý Accounts bên Admin (admin,staff,delivery)
+      responses:
+        200:
+          description: Successful response with account list.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  accounts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+        500:
+          description: Error fetching accounts.
+  
+  /admin/accounts/create:
+    post:
+      summary: Create a new account
+      tags:
+        - Quản lý Accounts bên Admin (admin,staff,delivery)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullname:
+                  type: string
+                  example: "John Doe"
+                email:
+                  type: string
+                  example: "johndoe@example.com"
+                password:
+                  type: string
+                  example: "password123"
+                phone:
+                  type: string
+                  example: "1234567890"
+                address:
+                  type: string
+                  example: "123 Main St"
+                role:
+                  type: string
+                  enum: ["user", "staff", "admin", "delivery"]
+                  example: "admin"
+      responses:
+        201:
+          description: Account created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  account:
+                    $ref: '#/components/schemas/User'
+                  token:
+                    type: string
+        400:
+          description: Email already used.
+        500:
+          description: Error creating account.
+  
+  /admin/accounts/{role}:
+    get:
+      summary: Get accounts by role
+      tags:
+        - Quản lý Accounts bên Admin (admin,staff,delivery)
+      parameters:
+        - name: role
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: ["user", "staff", "admin", "delivery"]
+      responses:
+        200:
+          description: Successful response with account list.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  accounts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+        500:
+          description: Error fetching accounts by role.
+  
+  /admin/accounts/login:
+    post:
+      summary: Login to an account
+      tags:
+        - Quản lý Accounts bên Admin (admin,staff,delivery)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "johndoe@example.com"
+                password:
+                  type: string
+                  example: "password123"
+      responses:
+        200:
+          description: Successful login response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    type: string
+                  role:
+                    type: string
+                  token:
+                    type: string
+        400:
+          description: Invalid email or password.
+  
+  /admin/accounts/edit:
+    patch:
+      summary: Edit account information
+      tags:
+        - Quản lý Accounts bên Admin (admin,staff,delivery)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullname:
+                  type: string
+                  example: "Jane Doe"
+                phone:
+                  type: string
+                  example: "0987654321"
+                address:
+                  type: string
+                  example: "456 Another St"
+      responses:
+        200:
+          description: Account updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        500:
+          description: Error updating account.
+
+
+  /admin/dashboard:
+    get:
+      tags:
+        - Admin Dashboard
+      summary: "Lấy danh sách tất cả các đơn hàng"
+      description: "Lấy danh sách các đơn hàng với thông tin chi tiết như mã đơn hàng, khách hàng, món ăn, tổng tiền, và trạng thái."
+      responses:
+        200:
+          description: "Danh sách các đơn hàng"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orders:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        orderCode:
+                          type: string
+                          example: "ORD12345"
+                        customer:
+                          type: string
+                          example: "John Doe"
+                        menuItems:
+                          type: string
+                          example: "Pizza, Salad, Pasta"
+                        totalPayment:
+                          type: string
+                          example: "300000"
+                        status:
+                          type: string
+                          example: "PENDING"
+        500:
+          description: "Lỗi hệ thống"
+
+  /admin/dashboard/total-revenue:
+    get:
+      tags:
+        - Admin Dashboard
+      summary: "Tổng doanh thu từ các đơn hàng đã thanh toán"
+      description: "Tính tổng doanh thu từ các đơn hàng có trạng thái 'PAID'."
+      responses:
+        200:
+          description: "Tổng doanh thu"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalRevenue:
+                    type: number
+                    format: float
+                    example: 1500000
+        500:
+          description: "Lỗi hệ thống"
+
+  /admin/dashboard/total-dishes:
+    get:
+      tags:
+        - Admin Dashboard
+      summary: "Tổng số lượng món ăn đã bán"
+      description: "Tính tổng số lượng món ăn trong các đơn hàng đã thanh toán."
+      responses:
+        200:
+          description: "Tổng số lượng món ăn"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalDishes:
+                    type: number
+                    example: 100
+        500:
+          description: "Lỗi hệ thống"
+
+  /admin/dashboard/total-orders:
+    get:
+      tags:
+        - Admin Dashboard
+      summary: "Tổng số đơn hàng"
+      description: "Tính tổng số đơn hàng trong hệ thống."
+      responses:
+        200:
+          description: "Tổng số đơn hàng"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalOrders:
+                    type: number
+                    example: 200
+        500:
+          description: "Lỗi hệ thống"
+
+  /admin/dashboard/get-order/{orderCode}:
+    get:
+      tags:
+        - Admin Dashboard
+      summary: "Lấy thông tin chi tiết đơn hàng"
+      description: "Lấy thông tin chi tiết của đơn hàng theo mã đơn hàng."
+      parameters:
+        - name: orderCode
+          in: path
+          required: true
+          description: "Mã đơn hàng cần lấy thông tin"
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Thông tin chi tiết đơn hàng"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    type: object
+                    properties:
+                      orderCode:
+                        type: string
+                        example: "ORD12345"
+                      status:
+                        type: string
+                        example: "PAID"
+                      totalAmount:
+                        type: number
+                        format: float
+                        example: 300000
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "Pizza"
+                            quantity:
+                              type: number
+                              example: 2
+                  customer:
+                    type: object
+                    properties:
+                      fullname:
+                        type: string
+                        example: "John Doe"
+        404:
+          description: "Không tìm thấy đơn hàng"
+        500:
+          description: "Lỗi hệ thống"
+
+  /admin/dashboard/change-status/{orderCode}:
+    patch:
+      tags:
+        - Admin Dashboard
+      summary: "Cập nhật trạng thái đơn hàng"
+      description: "Cập nhật trạng thái đơn hàng (ví dụ: từ 'PENDING' thành 'PAID')."
+      parameters:
+        - name: orderCode
+          in: path
+          required: true
+          description: "Mã đơn hàng cần cập nhật trạng thái"
+          schema:
+            type: string
+      requestBody:
+        description: "Thông tin trạng thái mới của đơn hàng"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: ["PENDING", "PAID", "CANCELLED"]
+                  example: "PAID"
+      responses:
+        200:
+          description: "Cập nhật trạng thái thành công"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Trạng thái đơn hàng ORD12345 đã được cập nhật thành công."
+                  data:
+                    type: object
+                    properties:
+                      orderCode:
+                        type: string
+                        example: "ORD12345"
+                      status:
+                        type: string
+                        example: "PAID"
+        404:
+          description: "Không tìm thấy đơn hàng"
+        500:
+          description: "Lỗi hệ thống"
+
+
+  /admin/tableBooking/list:
+    get:
+      tags:
+        - Admin Table Bookings
+      summary: "Lấy danh sách tất cả các đơn đặt bàn"
+      description: "Lấy danh sách các đơn đặt bàn với bộ lọc theo ngày nếu có."
+      parameters:
+        - name: date
+          in: query
+          description: "Ngày cần lọc theo định dạng dd/mm/yyyy"
+          required: false
+          schema:
+            type: string
+            example: "01/01/2025"
+      responses:
+        200:
+          description: "Danh sách các đơn đặt bàn"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    bookingId:
+                      type: string
+                      example: "605c72ef153207001f6470c"
+                    customer:
+                      type: string
+                      example: "John Doe"
+                    bookingDate:
+                      type: string
+                      example: "01/01/2025"
+                    bookingTime:
+                      type: string
+                      example: "18:00"
+                    status:
+                      type: string
+                      example: "CONFIRMED"
+        500:
+          description: "Lỗi hệ thống"
+
+  /admin/tableBooking/detail/{id}:
+    get:
+      tags:
+        - Admin Table Bookings
+      summary: "Lấy thông tin chi tiết của một đơn đặt bàn"
+      description: "Lấy thông tin chi tiết của đơn đặt bàn theo id, bao gồm thông tin khách hàng, đơn hàng và món ăn."
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "ID của đơn đặt bàn cần lấy thông tin chi tiết"
+          schema:
+            type: string
+            example: "605c72ef153207001f6470c"
+      responses:
+        200:
+          description: "Thông tin chi tiết của đơn đặt bàn"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bookingId:
+                    type: string
+                    example: "605c72ef153207001f6470c"
+                  customer:
+                    type: string
+                    example: "John Doe"
+                  phone:
+                    type: string
+                    example: "123456789"
+                  bookingDate:
+                    type: string
+                    example: "01/01/2025"
+                  bookingTime:
+                    type: string
+                    example: "18:00"
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: "Pizza"
+                        quantity:
+                          type: integer
+                          example: 2
+        404:
+          description: "Không tìm thấy đơn đặt bàn"
+        500:
+          description: "Lỗi hệ thống"
+
+
+
+  /admin/delivery/orders:
+    get:
+      tags:
+        - Delivery Orders
+      summary: "Lấy danh sách tất cả các đơn hàng giao hàng"
+      description: "Lấy danh sách các đơn hàng giao hàng chưa bị xóa, sắp xếp theo thời gian tạo mới nhất."
+      responses:
+        200:
+          description: "Danh sách các đơn hàng giao hàng"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  formattedOrders:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        orderCode:
+                          type: string
+                          example: "123ABC456"
+                        customer:
+                          type: string
+                          example: "John Doe"
+                        menuItems:
+                          type: string
+                          example: "Pizza, Burger"
+                        totalPayment:
+                          type: string
+                          example: "100000"
+                        status:
+                          type: string
+                          example: "DELIVERED"
+                        deliveryDetails:
+                          type: object
+                          properties:
+                            address:
+                              type: string
+                              example: "123 Main St, Ho Chi Minh City"
+                            phone:
+                              type: string
+                              example: "123456789"
+        500:
+          description: "Lỗi hệ thống"
+
+  /admin/delivery/orders/{orderCode}:
+    get:
+      tags:
+        - Delivery Orders
+      summary: "Lấy thông tin chi tiết của một đơn hàng giao hàng"
+      description: "Lấy thông tin chi tiết của đơn hàng giao hàng theo mã đơn hàng."
+      parameters:
+        - name: orderCode
+          in: path
+          required: true
+          description: "Mã đơn hàng cần lấy thông tin chi tiết"
+          schema:
+            type: string
+            example: "123ABC456"
+      responses:
+        200:
+          description: "Thông tin chi tiết của đơn hàng giao hàng"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    type: object
+                    properties:
+                      orderCode:
+                        type: string
+                        example: "123ABC456"
+                      totalAmount:
+                        type: number
+                        example: 100000
+                      status:
+                        type: string
+                        example: "DELIVERED"
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "Pizza"
+                            quantity:
+                              type: integer
+                              example: 2
+                  customer:
+                    type: object
+                    properties:
+                      fullname:
+                        type: string
+                        example: "John Doe"
+        404:
+          description: "Không tìm thấy đơn hàng"
+        500:
+          description: "Lỗi hệ thống"
+
+
+# ============================================= SCHEMA =================================================================
+
+
+
+
+components:
+  schemas:
+    Dish:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: "Unique identifier for the dish"
+          example: "6479b1e9a0f1b2d8f8c8d1b3"
+        name:
+          type: string
+          description: "The name of the dish"
+          example: "Spaghetti Carbonara"
+        slug:
+          type: string
+          description: "URL-friendly slug generated from the dish name"
+          example: "spaghetti-carbonara"
+        description:
+          type: string
+          description: "Detailed description of the dish"
+          example: "Classic Italian pasta with creamy sauce and pancetta"
+        price:
+          type: number
+          description: "Price of the dish"
+          minimum: 0
+          example: 12.5
+        slugCategory:
+          type: string
+          description: "URL-friendly slug generated from the category"
+          example: "main-course"
+        category:
+          type: string
+          description: "Category of the dish"
+          enum:
+            - "Appetizer"
+            - "Main Course"
+            - "Dessert"
+            - "Drink"
+          example: "Main Course"
+        imageUrl:
+          type: string
+          description: "URL to the image of the dish"
+          example: "https://example.com/images/spaghetti-carbonara.jpg"
+        like:
+          type: integer
+          description: "Number of likes for the dish"
+          example: 25
+      required:
+        - name
+        - price
+        - category
+
+    # Schema for Cart 
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: "Unique identifier for the cart"
+          example: "6483e9f1d2b9c6f3a5d8b4a9"
+        customer_id:
+          type: string
+          description: "Identifier of the customer who owns the cart"
+          example: "6479b1e9a0f1b2d8f8c8d1b3"
+        dishes:
+          type: array
+          description: "List of dishes added to the cart"
+          items:
+            type: object
+            properties:
+              dish_id:
+                type: string
+                description: "Unique identifier of the dish"
+                example: "6479b1e9a0f1b2d8f8c8d1b4"
+              quantity:
+                type: integer
+                description: "Quantity of the dish added to the cart"
+                example: 2
+        totalAmount:
+          type: number
+          description: "Total amount of the cart"
+          example: 35.5
+      required:
+        - customer_id
+        - dishes
+
+# Schema for Otp
+    Otp:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: "Unique identifier for the OTP entry"
+          example: "6483e9f1d2b9c6f3a5d8b4a9"
+        email:
+          type: string
+          format: email
+          description: "Email address associated with the OTP"
+          example: "user@example.com"
+        otp:
+          type: string
+          description: "One-time password code"
+          example: "123456"
+        time:
+          type: string
+          format: date-time
+          description: "Timestamp of OTP creation"
+          example: "2023-10-25T14:48:00.000Z"
+        expires:
+          type: string
+          format: date-time
+          description: "Expiration time of the OTP"
+          example: "2023-10-25T14:53:00.000Z"
+      required:
+        - email
+        - otp
+        - time
+        - expires
+
+# Schema for TableBooking
+    TableBooking:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: "Unique identifier for the booking"
+          example: "6483e9f1d2b9c6f3a5d8b4a9"
+        customer_id:
+          type: string
+          description: "Customer's ID associated with the booking"
+          example: "6483e9f1d2b9c6f3a5d8b4b0"
+        bookingDate:
+          type: string
+          description: "Booking date in DD/MM/YYYY format"
+          example: "07/11/2024"
+        bookingTime:
+          type: string
+          description: "Booking time in HH:mm:ss format"
+          example: "18:30:00"
+        numberofSeats:
+          type: integer
+          enum: [2, 4, 6, 8, 10]
+          description: "Number of seats reserved"
+          example: 4
+        tableId:
+          type: string
+          description: "ID of the table reserved"
+          example: "6483e9f1d2b9c6f3a5d8b4b1"
+      required:
+        - customer_id
+        - bookingDate
+        - bookingTime
+        - numberofSeats
+
+# Schema for User
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: "Unique identifier for the user"
+          example: "6483e9f1d2b9c6f3a5d8b4a2"
+        fullname:
+          type: string
+          description: "Full name of the user"
+          example: "John Doe"
+          minLength: 3
+          maxLength: 50
+        email:
+          type: string
+          description: "User's email address"
+          format: email
+          example: "johndoe@example.com"
+        password:
+          type: string
+          description: "User's password"
+          minLength: 6
+          example: "password123"
+        phone:
+          type: string
+          description: "User's phone number"
+          example: "1234567890"
+          pattern: "^\\d{10,15}$"
+        address:
+          type: string
+          description: "User's address"
+          example: "123 Main St, City, Country"
+        role:
+          type: string
+          description: "Role of the user"
+          enum: ["user", "staff", "admin", "delivery"]
+          default: "user"
+          example: "user"
+        token:
+          type: string
+          description: "Authentication token for the user"
+          example: "abcdef12345"
+      required:
+        - fullname
+        - email
+        - password
+        - phone
+
+    Order:
+      type: object
+      properties:
+        orderCode:
+          type: number
+          example: 1234
+        customer_id:
+          type: string
+          example: "userId123"
+        orderType:
+          type: string
+          example: "Delivery"
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "Mì tôm"
+              quantity:
+                type: integer
+                example: 2
+              price:
+                type: number
+                example: 5000
+        totalAmount:
+          type: number
+          example: 10000
+        status:
+          type: string
+          example: "PAID"
+
+    PaymentLinkResponse:
+      type: object
+      properties:
+        bin:
+          type: string
+          example: "9704"
+        accountNumber:
+          type: string
+          example: "1234567890"
+        accountName:
+          type: string
+          example: "Nguyen Van A"
+        amount:
+          type: number
+          example: 5000
+        description:
+          type: string
+          example: "Thanh toán đơn hàng"
+        orderCode:
+          type: number
+          example: 1234
+        currency:
+          type: string
+          example: "VND"
+        paymentLinkId:
+          type: string
+          example: "link1234"
+        status:
+          type: string
+          example: "PAID"
+        checkoutUrl:
+          type: string
+          example: "https://example.com/payment"
+        qrCode:
+          type: string
+          example: "https://example.com/qr.png"
+
+    PaymentLink:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "link1234"
+        orderCode:
+          type: number
+          example: 1234
+        amount:
+          type: number
+          example: 5000
+        status:
+          type: string
+          example: "PAID"
+        transactions:
+          type: array
+          items:
+            type: object
+        canceledAt:
+          type: string
+          example: null

@@ -1,0 +1,23 @@
+FROM node:18
+
+# Tạo user
+RUN useradd -m user
+
+WORKDIR /app
+
+# Copy package.json/package-lock.json và cài đặt dependencies với quyền root
+COPY package*.json ./
+
+RUN npm install
+RUN npm i nodemon --save-dev
+
+# Copy toàn bộ mã nguồn và gán quyền cho user
+COPY . . 
+RUN chown -R user:user /app
+
+# Chuyển sang user thường
+USER user
+
+EXPOSE 3000
+
+CMD ["npm", "start"]

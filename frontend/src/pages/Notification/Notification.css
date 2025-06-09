@@ -1,0 +1,20 @@
+.notification-btn{
+    border: 1px solid var(--Base-Dark-Line, #393c49);
+  background: var(--Base-Dark-Bg-2, #1f1d2b);
+  color: #fff;
+}
+
+.MuiTextField-root{
+    border: 1px solid var(--Base-Dark-Line, #393c49) !important;
+  background: var(--Base-Dark-Bg-2, #1f1d2b) !important;
+  border-radius: 8px !important;
+}
+
+.MuiOutlinedInput-root:hover{
+    border: transparent;
+    border-radius: 8px;
+}
+
+.Mui-focused{
+    border: transparent !important;
+}

@@ -1,0 +1,85 @@
+.container-item-menu {
+  position: relative;
+  flex-shrink: 1;
+  flex-grow: 1;
+    flex-basis: 210.2px;
+}
+
+.container-item-menu .item {
+  height: 244.08px;
+  background-color: #1f1d2b;
+  border-radius: 10px;
+  margin-top: 34.72px;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.container-item-menu .image-item {
+  position: absolute;
+  top: 0;
+}
+
+.container-item-menu .image-item .img-food {
+  height: 132px;
+  border-radius: 50%;
+  width: 132px;
+}
+
+.container-item-menu .image-item .img-plus {
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+}
+
+.container-item-menu .content-item {
+  margin-top: 114px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 24px;
+  margin-right: 24px;
+  margin-bottom: 24px;
+}
+
+.container-item-menu .content-item .name {
+  color: var(--White, #fff);
+  text-align: center;
+  /* Body / Normal - Medium */
+  font-family: Barlow;
+  font-size: 20px;
+  max-width: 165px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%; /* 18.2px */
+}
+
+.container-item-menu .content-item .detail-item {
+  display: flex;
+  margin-top: auto;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.content-item .detail-item .price-item {
+  color: var(--White, #fff);
+  text-align: center;
+  /* Body / Normal - Regular */
+  font-family: Barlow;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 140%; /* 19.6px */
+}
+
+.content-item .detail-item .store-item {
+  color: var(--Text-Light, #abbbc2);
+  text-align: center;
+  /* Body / Normal - Regular */
+  font-family: Barlow;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 140%; /* 19.6px */
+}
