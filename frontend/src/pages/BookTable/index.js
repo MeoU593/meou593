@@ -13,40 +13,88 @@ const formatDate = (dayStr) => {
   return dayjs(dayStr).format("DD/MM/YYYY");
 }
 
+const formatTime = (timeStr) => {
+  // Chuyển HH:mm thành HH:mm:ss
+  return timeStr + ":00";
+}
+
 const BookTable = () => {
   const dispatch = useDispatch();
   const { showSnackbar } = useSnackbar();
   const open = useSelector(state => state.backdropAction);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    numberofSeats: 1,
+    numberofSeats: 2, // Đặt default là 2 thay vì 1
     bookingDate: "",
     bookingTime: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-      setFormData({ ...formData, [name]: value });
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleConfirm = async (e) => {
     e.preventDefault();
-    try{
+    
+    // Kiểm tra dữ liệu trước khi gửi
+    if (!formData.bookingDate || !formData.bookingTime) {
+      showSnackbar("Vui lòng điền đầy đủ ngày và giờ đặt bàn");
+      return;
+    }
+
+    // Kiểm tra thời gian đặt bàn phải trong tương lai
+    const bookingDateTime = dayjs(`${formData.bookingDate} ${formData.bookingTime}`);
+    const now = dayjs();
+    
+    if (bookingDateTime.isBefore(now)) {
+      showSnackbar("Thời gian đặt bàn phải trong tương lai");
+      return;
+    }
+
+    // Kiểm tra thời gian đặt bàn phải ít nhất 5 phút sau hiện tại
+    if (bookingDateTime.diff(now, 'minute') < 5) {
+      showSnackbar("Thời gian đặt bàn phải ít nhất 5 phút sau hiện tại");
+      return;
+    }
+
+    try {
       dispatch(openBackDrop());
-      formData.bookingDate = formatDate(formData.bookingDate);
-      console.log(formData)
-      await api.post(`table/create`, formData);
-      showSnackbar("Đặt bàn thành công");
+      
+      const requestData = {
+        numberofSeats: parseInt(formData.numberofSeats),
+        bookingDate: formatDate(formData.bookingDate),
+        bookingTime: formatTime(formData.bookingTime)
+      };
+      
+      console.log("Sending booking data:", requestData);
+      
+      const response = await api.post(`table/create`, requestData);
+      console.log("Booking response:", response.data);
+      
+      showSnackbar("Đặt bàn thành công!");
       navigate("/menu?order-type=Dine In");
-    }catch(e){
-      if(e.response.status === 400){
+      
+    } catch (e) {
+      console.error("Booking error:", e);
+      
+      if (e.response && e.response.data && e.response.data.message) {
+        showSnackbar(e.response.data.message);
+      } else if (e.response && e.response.status === 400) {
         showSnackbar("Không có bàn nào sẵn trong thời gian này");
       } else {
-        showSnackbar("Đặt bàn thất bại");
+        showSnackbar("Đặt bàn thất bại. Vui lòng thử lại!");
       }
     }
     dispatch(closeBackDrop());
   };
+
+  // Lấy ngày hiện tại để set min date
+  const today = dayjs().format('YYYY-MM-DD');
+  
+  // Lấy giờ hiện tại + 5 phút để set min time (nếu chọn ngày hôm nay)
+  const minTime = dayjs().add(5, 'minute').format('HH:mm');
+  const isToday = formData.bookingDate === today;
 
   return (
     <div className="book-table-wrapper">
@@ -81,15 +129,29 @@ const BookTable = () => {
         <form onSubmit={handleConfirm}>
           <div className="input-group">
             <label htmlFor="numberofSeats">Số lượng khách</label>
-            <input
-              type="number"
+            <select
               id="numberofSeats"
               name="numberofSeats"
-              min="1"
               value={formData.numberofSeats}
               onChange={handleChange}
               required
-            />
+              style={{
+                width: '100%',
+                background: 'transparent',
+                border: '1px solid rgba(255, 255, 255, 0.10)',
+                color: '#fff',
+                fontSize: '16px',
+                padding: '12px 15px',
+                outline: 'none',
+                borderRadius: '8px'
+              }}
+            >
+              <option value={2} style={{color: '#000'}}>2 người</option>
+              <option value={4} style={{color: '#000'}}>4 người</option>
+              <option value={6} style={{color: '#000'}}>6 người</option>
+              <option value={8} style={{color: '#000'}}>8 người</option>
+              <option value={10} style={{color: '#000'}}>10 người</option>
+            </select>
           </div>
           <div className="input-row">
             <div className="input-group">
@@ -100,6 +162,7 @@ const BookTable = () => {
                 name="bookingDate"
                 value={formData.bookingDate}
                 onChange={handleChange}
+                min={today}
                 required
               />
             </div>
@@ -111,6 +174,7 @@ const BookTable = () => {
                 name="bookingTime"
                 value={formData.bookingTime}
                 onChange={handleChange}
+                min={isToday ? minTime : "00:00"}
                 required
               />
             </div>

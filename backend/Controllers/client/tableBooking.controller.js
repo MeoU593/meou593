@@ -2,71 +2,110 @@ const mongoose = require('mongoose');
 const TableBooking = require("../../models/tableBooking.model");
 const Table = require('../../models/table.model');
 const moment = require('moment');
-// *****LOGIC Ở ĐÂY VẪN CÓ VÀI CHỖ CHƯA HỢP LÍ Ở NGAY PHẦN ĐẦU ĐOẠN XÁC ĐỊNH BÀN ĐỂ ĐẶT, NẾU ĐỂ LÀ TÌM BÀN AVAILABLE THÌ VÔ LÍ (DÒNG 12) NÓ SẼ BỊ MISS TRƯỜNG HỢP (SỬA SAU)
+
 const createBooking = async (req, res) => {
     try {
-        console.log("Bắt đầu");
+        console.log("Bắt đầu đặt bàn");
+        console.log("Request body:", req.body);
+
+        // Kiểm tra xem có bàn nào trong hệ thống không
+        const allTables = await Table.find({});
+        console.log("Tất cả bàn trong hệ thống:", allTables.length);
+
+        if (allTables.length === 0) {
+            return res.status(400).json({
+                message: "Hệ thống chưa có bàn nào. Vui lòng liên hệ quản lý!",
+            });
+        }
 
         // TÌM TẤT CẢ CÁC BÀN PHÙ HỢP VỚI YÊU CẦU 
         const availableTables = await Table.find({
-            status: 'available',
-            numberofSeats: req.body.numberofSeats
+            numberofSeats: { $gte: parseInt(req.body.numberofSeats) } // Tìm bàn có số ghế >= yêu cầu
         });
+
+        console.log("Bàn phù hợp với số ghế:", availableTables.length);
 
         if (availableTables.length === 0) {
             return res.status(400).json({
-                message: "Không còn bàn nào có sẵn để đặt!",
+                message: `Không có bàn nào phù hợp với ${req.body.numberofSeats} người!`,
             });
         }
 
         // THỜI GIAN ĐẶT BÀN VÀ THỜI GIAN BÀN HẾT HIỆU LỰC
-        const bookingDateTime = moment.utc(`${req.body.bookingDate} ${req.body.bookingTime}`, 'DD/MM/YYYY HH:mm:ss');
+        const bookingDateTime = moment(`${req.body.bookingDate} ${req.body.bookingTime}`, 'DD/MM/YYYY HH:mm');
         const expiryDateTime = bookingDateTime.clone().add(2, 'hours'); 
 
-        let isAvailable = false;
-        let selectedTable = null;
+        console.log("Thời gian đặt bàn:", bookingDateTime.format());
+        console.log("Thời gian hết hạn:", expiryDateTime.format());
 
-        // THỜI GIAN ĐẶT BÀN PHẢI TRƯỚC X PHÚT (Ở ĐÂY ĐANG LẤY LÀ 5)
-        const now = moment.utc();
-        const oneHourInMillis = 60 * 1000;  // 1 * 1000 = 1 GIÂY
-        if (bookingDateTime.diff(now) < oneHourInMillis) {
+        // KIỂM TRA THỜI GIAN ĐẶT BÀN (phải trước ít nhất 5 phút)
+        const now = moment();
+        const fiveMinutesInMillis = 5 * 60 * 1000; // 5 phút
+        
+        if (bookingDateTime.diff(now) < fiveMinutesInMillis) {
             return res.status(400).json({
-                message: "Thời gian đặt bàn phải trước ít nhất 5 phút.",
+                message: "Thời gian đặt bàn phải trước ít nhất 5 phút so với hiện tại.",
             });
         }
 
-        // DUYỆT QUA TẤT CẢ CÁC BÀN VÀ KIẾM BÀN CÓ THỂ ĐẶT
-        for (let availableTable of availableTables) {
+        let selectedTable = null;
+
+        // DUYỆT QUA TẤT CẢ CÁC BÀN VÀ KIỂM TRA TÍNH KHẢ DỤNG
+        for (let table of availableTables) {
             let isTableAvailable = true;
-      
+            console.log(`Kiểm tra bàn ${table._id}...`);
 
-            // KIỂM TRA XEM THỬ BÀN NÀY CÓ ĐC ĐẶT CHỖ CHƯA, NẾU CÓ THÌ XEM THỬ CHỖ ĐẶT CỦA NÓ CÓ TRÙNG VỨI CHỖ KHÁC VỪA ĐẶT KHÔNG
-            if (availableTable.bookingHistory.length > 0) {
-                for (let booking of availableTable.bookingHistory) {
-                    const startBooking = moment.utc(booking.startBooking);
-                    const endBooking = moment.utc(booking.endBooking);
+            // KIỂM TRA LỊCH SỬ ĐẶT BÀN
+            if (table.bookingHistory && table.bookingHistory.length > 0) {
+                for (let booking of table.bookingHistory) {
+                    const startBooking = moment(booking.startBooking);
+                    const endBooking = moment(booking.endBooking);
 
+                    console.log(`Booking hiện tại: ${startBooking.format()} - ${endBooking.format()}`);
+
+                    // Kiểm tra xem có trùng lặp thời gian không
                     if (
                         (bookingDateTime.isBetween(startBooking, endBooking, null, '[)')) || 
                         (expiryDateTime.isBetween(startBooking, endBooking, null, '(]')) || 
                         (bookingDateTime.isSameOrBefore(startBooking) && expiryDateTime.isSameOrAfter(endBooking))
                     ) {
+                        console.log("Bàn bị trùng lịch");
                         isTableAvailable = false;
                         break;
                     }
                 }
             }
 
+            // Kiểm tra xem đã có người đặt bàn này trong thời gian tương lai chưa
+            const existingBooking = await TableBooking.findOne({
+                tableId: table._id,
+                bookingDate: req.body.bookingDate,
+                deleted: false
+            });
+
+            if (existingBooking) {
+                const existingBookingTime = moment(`${existingBooking.bookingDate} ${existingBooking.bookingTime}`, 'DD/MM/YYYY HH:mm');
+                const existingExpiryTime = moment(`${existingBooking.expiryDate} ${existingBooking.expiryTime}`, 'DD/MM/YYYY HH:mm');
+
+                if (
+                    (bookingDateTime.isBetween(existingBookingTime, existingExpiryTime, null, '[)')) || 
+                    (expiryDateTime.isBetween(existingBookingTime, existingExpiryTime, null, '(]')) || 
+                    (bookingDateTime.isSameOrBefore(existingBookingTime) && expiryDateTime.isSameOrAfter(existingExpiryTime))
+                ) {
+                    console.log("Bàn đã được đặt trong TableBooking");
+                    isTableAvailable = false;
+                }
+            }
+
             // NẾU BÀN CÒN TRỐNG THÌ CHỌN BÀN NÀY
             if (isTableAvailable) {
-                selectedTable = availableTable;
-                isAvailable = true;
+                selectedTable = table;
+                console.log(`Đã chọn bàn ${table._id}`);
                 break;
             }
         }
 
-    
-        if (!isAvailable) {
+        if (!selectedTable) {
             return res.status(400).json({
                 message: "Không còn bàn nào có sẵn để đặt trong khoảng thời gian này!",
             });
@@ -78,21 +117,10 @@ const createBooking = async (req, res) => {
             endBooking: expiryDateTime.toDate()
         });
 
-       
         await selectedTable.save();
+        console.log("Đã cập nhật lịch sử bàn");
 
-        // TÍNH KHOẢNG THỜI GIAN TỪ BÂY GIỜ ĐẾN KHI ĐẶT BÀN, ĐỂ ĐẾN KHI ĐÓ NÓ MỚI ĐỔI THÀNH UNAVAILABLE
-        const delayUntilBooking = bookingDateTime.utc().valueOf() - now.utc().valueOf();
-
-        
-        setTimeout(async () => {
-            await Table.findByIdAndUpdate(selectedTable._id, { status: 'unavailable' });
-            // SAU KHI HẾT 2 GIỜ THÌ BÀN SẼ TỰ CHUYỂN VỀ AVAILABLE
-            setTimeout(async () => {
-                await Table.findByIdAndUpdate(selectedTable._id, { status: 'available' });
-            }, 60 * 1000); 
-        }, delayUntilBooking);
-
+        // TẠO BOOKING MỚI
         const booking = new TableBooking({
             customer_id: req.user._id,
             bookingDate: req.body.bookingDate,
@@ -102,12 +130,42 @@ const createBooking = async (req, res) => {
         });
 
         const data = await booking.save();
+        console.log("Đã tạo booking thành công");
+
+        // LƯỚI THỜI GIAN ĐỂ CẬP NHẬT TRẠNG THÁI BÀN (tùy chọn - có thể bỏ nếu không cần)
+        const delayUntilBooking = Math.max(0, bookingDateTime.valueOf() - now.valueOf());
+        
+        if (delayUntilBooking > 0) {
+            setTimeout(async () => {
+                try {
+                    await Table.findByIdAndUpdate(selectedTable._id, { status: 'unavailable' });
+                    console.log(`Bàn ${selectedTable._id} đã chuyển thành unavailable`);
+                    
+                    // SAU 2 GIỜ THÌ CHUYỂN VỀ AVAILABLE
+                    setTimeout(async () => {
+                        try {
+                            await Table.findByIdAndUpdate(selectedTable._id, { status: 'available' });
+                            console.log(`Bàn ${selectedTable._id} đã chuyển về available`);
+                        } catch (error) {
+                            console.error("Lỗi khi cập nhật trạng thái bàn về available:", error);
+                        }
+                    }, 2 * 60 * 60 * 1000); // 2 giờ
+                } catch (error) {
+                    console.error("Lỗi khi cập nhật trạng thái bàn:", error);
+                }
+            }, delayUntilBooking);
+        }
 
         res.status(201).json({
-            message: `Chúc mừng ${req.user.fullname} đã đặt bàn thành công`,
-            data,
+            message: `Chúc mừng ${req.user.fullname} đã đặt bàn thành công!`,
+            data: {
+                ...data.toObject(),
+                tableNumber: selectedTable._id,
+                tableSeats: selectedTable.numberofSeats
+            },
         });
     } catch (error) {
+        console.error("Lỗi đặt bàn:", error);
         res.status(500).json({
             message: "Đặt bàn thất bại",
             error: error.message,
@@ -115,9 +173,6 @@ const createBooking = async (req, res) => {
     }
 };
 
-
 module.exports = {
     createBooking,
 };
-
-

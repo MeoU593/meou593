@@ -20,19 +20,19 @@ function DashBoard(){
     const [data, setData] = useState([
     {
         img: money,
-        context: '+32.40%',
+        context: '0%',
         title: 'Tổng doanh thu',
         value: '0đ',
     },
     {
         img: dishes,
-        context: '-12.40%',
+        context: '0%',
         title: 'Tổng thức ăn đã đặt',
         value: '0',
     },
     {
         img: people,
-        context: '+2.40%',
+        context: '0%',
         title: 'Tổng đơn hàng',
         value: '0',
     },
@@ -44,30 +44,38 @@ function DashBoard(){
         try{
             dispatch(openBackDrop());
             const response = await api.get(`admin/dashboard/total-revenue`);
-            data.at(0).value = `${response.data.totalRevenue}đ`;
-            setData([...data]);
+            const newData = [...data];
+            newData[0].value = `${response.data.totalRevenue.toLocaleString()}đ`;
+            newData[0].context = `${response.data.percentChange >= 0 ? '+' : ''}${response.data.percentChange}%`;
+            setData(newData);
         }catch(e){
             showSnackbar("Lỗi kết nối");
         }
         dispatch(closeBackDrop());
     }
+    
     async function getTotalDish(){
         try{
             dispatch(openBackDrop());
             const response = await api.get(`admin/dashboard/total-dishes`);
-            data.at(1).value = `${response.data.totalDishes}`;
-            setData([...data]);
+            const newData = [...data];
+            newData[1].value = `${response.data.totalDishes.toLocaleString()}`;
+            newData[1].context = `${response.data.percentChange >= 0 ? '+' : ''}${response.data.percentChange}%`;
+            setData(newData);
         }catch(e){
             showSnackbar("Lỗi kết nối");
         }
         dispatch(closeBackDrop());
     }
+    
     async function getTotalOrdered(){
         try{
             dispatch(openBackDrop());
             const response = await api.get(`admin/dashboard/total-orders`);
-            data.at(2).value = `${response.data.totalOrders}`;
-            setData([...data]);
+            const newData = [...data];
+            newData[2].value = `${response.data.totalOrders.toLocaleString()}`;
+            newData[2].context = `${response.data.percentChange >= 0 ? '+' : ''}${response.data.percentChange}%`;
+            setData(newData);
         }catch(e){
             showSnackbar("Lỗi kết nối");
         }
@@ -84,7 +92,7 @@ function DashBoard(){
                 orderCode: item.orderCode,
                 menuItems: item.menuItems,
                 status: item.status === "PAID"? "Đã thanh toán" : "Đang chờ",
-                totalPayment: item.totalPayment,
+                totalPayment: `${parseInt(item.totalPayment).toLocaleString()}đ`,
                 action: ""
             })))
         }catch(e){
@@ -116,8 +124,8 @@ function DashBoard(){
               <div className="box1-1-context">
                 {item.context}
                 <img
-                  src={parseFloat(item.context) > 0 ? UpIcon : DownIcon}
-                  alt={parseFloat(item.context) > 0 ? 'up' : 'down'}
+                  src={parseFloat(item.context) >= 0 ? UpIcon : DownIcon}
+                  alt={parseFloat(item.context) >= 0 ? 'up' : 'down'}
                   className="percent-icon"
                 />
               </div>

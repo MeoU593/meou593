@@ -59,6 +59,66 @@ function DetailOrder() {
     dispatch(closeBackDrop());
   }
 
+  async function getOrderByCode() {
+    try {
+      dispatch(openBackDrop());
+      const response = await api.get(`admin/dashboard/get-order/${id}`);
+      setOrder({
+        ...response.data.order,
+        items: Array.from(response.data.order.items).map((item) => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+      });
+      setCustomer(response.data.customer);
+      console.log(response);
+    } catch (e) {
+      showSnackbar("Lỗi kết nối");
+    }
+    dispatch(closeBackDrop());
+  }
+
+  async function handleComplete() {
+    if (!order || !order.orderCode) {
+      showSnackbar("Không tìm thấy mã đơn hàng");
+      return;
+    }
+
+    if (order.status === "PAID") {
+      showSnackbar("Đơn hàng đã được hoàn thành");
+      return;
+    }
+
+    try {
+      dispatch(openBackDrop());
+      const response = await api.patch(`admin/dashboard/change-status/${order.orderCode}`);
+      
+      if (response.status === 200) {
+        showSnackbar("Đơn hàng đã được hoàn thành thành công!");
+        
+        // Cập nhật state local
+        setOrder(prev => ({
+          ...prev,
+          status: "PAID"
+        }));
+        
+        // Có thể navigate về trang trước sau một khoảng thời gian
+        setTimeout(() => {
+          navigate(-1);
+        }, 1500);
+      }
+    } catch (e) {
+      console.error(e);
+      if (e.response && e.response.data && e.response.data.message) {
+        showSnackbar(e.response.data.message);
+      } else {
+        showSnackbar("Lỗi khi cập nhật trạng thái đơn hàng");
+      }
+    }
+    dispatch(closeBackDrop());
+  }
+
   useEffect(() => {
     if (userData && userData.user && userData.user.role === "delivery") {
       getDeliveryOrder();
@@ -66,6 +126,9 @@ function DetailOrder() {
       const orderType = searchParam.get("order-type");
       if (orderType === "delivery") {
         getDeliveryOrder();
+      } else if (orderType === "order") {
+        // Nếu là chi tiết đơn hàng từ dashboard
+        getOrderByCode();
       } else {
         getTableBooking();
       }
@@ -127,11 +190,9 @@ function DetailOrder() {
                                     return (
                                       <td key={id}>
                                         <div>
-                                          {data}
-                                          {Object.entries(item).at(id)[0] ===
-                                          "price"
-                                            ? "đ"
-                                            : ""}
+                                          {Object.entries(item).at(id)[0] === "price" 
+                                            ? `${parseInt(data).toLocaleString()}đ`
+                                            : data}
                                         </div>
                                       </td>
                                     );
@@ -151,10 +212,25 @@ function DetailOrder() {
                 </div>
               </div>
             </div>
-            {order && order.bookingId? <></> : <div className="total"><p>Tổng tiền: </p><p>{order ? order.totalAmount : "0"}đ</p></div>}
+            {order && order.bookingId? <></> : 
+              <div className="total">
+                <p>Tổng tiền: </p>
+                <p>{order ? `${parseInt(order.totalAmount).toLocaleString()}đ` : "0đ"}</p>
+              </div>
+            }
             <div className="group-btn">
-              <button type="button" onClick={() => navigate("/notification")}>Quay lại</button>
-              <button type="button" onClick={() => {}}>Hoàn thành</button>
+              <button type="button" onClick={() => navigate(-1)}>Quay lại</button>
+              <button 
+                type="button" 
+                onClick={handleComplete}
+                disabled={order && order.status === "PAID"}
+                style={{
+                  opacity: order && order.status === "PAID" ? 0.5 : 1,
+                  cursor: order && order.status === "PAID" ? "not-allowed" : "pointer"
+                }}
+              >
+                {order && order.status === "PAID" ? "Đã hoàn thành" : "Hoàn thành"}
+              </button>
             </div>
           </div>
         </div>

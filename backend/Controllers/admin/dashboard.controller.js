@@ -29,36 +29,145 @@ const index = async (req, res) => {
         });
     }
 };
+
 const totalRevenue = async (req, res) => {
     try {
-        const totalRevenue = await Order.aggregate([
-            { $match: { status: "PAID" } },
+        // Doanh thu tháng hiện tại
+        const currentMonth = new Date();
+        const startOfCurrentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+        const endOfCurrentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+
+        // Doanh thu tháng trước
+        const lastMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1);
+        const endOfLastMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 0);
+
+        const currentRevenue = await Order.aggregate([
+            { 
+                $match: { 
+                    status: "PAID",
+                    createdAt: { $gte: startOfCurrentMonth, $lte: endOfCurrentMonth }
+                }
+            },
             { $group: { _id: null, total: { $sum: "$totalAmount" } } }
         ]);
-        res.status(200).json({ totalRevenue: totalRevenue[0]?.total || 0 });
+
+        const lastRevenue = await Order.aggregate([
+            { 
+                $match: { 
+                    status: "PAID",
+                    createdAt: { $gte: lastMonth, $lte: endOfLastMonth }
+                }
+            },
+            { $group: { _id: null, total: { $sum: "$totalAmount" } } }
+        ]);
+
+        const current = currentRevenue[0]?.total || 0;
+        const last = lastRevenue[0]?.total || 0;
+        
+        // Tính phần trăm thay đổi
+        let percentChange = 0;
+        if (last > 0) {
+            percentChange = ((current - last) / last) * 100;
+        } else if (current > 0) {
+            percentChange = 100;
+        }
+
+        res.status(200).json({ 
+            totalRevenue: current,
+            percentChange: percentChange.toFixed(2)
+        });
     } catch (error) {
         res.status(500).json({ message: "Failed to calculate revenue", error: error.message });
     }
 }
+
 const totalDishes = async (req, res) => {
     try {
-        const totalDishes = await Order.aggregate([
-            { $unwind: "$items" }, // Phân rã các món trong từng order
+        // Số món ăn tháng hiện tại
+        const currentMonth = new Date();
+        const startOfCurrentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+        const endOfCurrentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+
+        // Số món ăn tháng trước
+        const lastMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1);
+        const endOfLastMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 0);
+
+        const currentDishes = await Order.aggregate([
+            { 
+                $match: { 
+                    createdAt: { $gte: startOfCurrentMonth, $lte: endOfCurrentMonth }
+                }
+            },
+            { $unwind: "$items" },
             { $group: { _id: null, total: { $sum: "$items.quantity" } } }
         ]);
-        res.status(200).json({ totalDishes: totalDishes[0]?.total || 0 });
+
+        const lastDishes = await Order.aggregate([
+            { 
+                $match: { 
+                    createdAt: { $gte: lastMonth, $lte: endOfLastMonth }
+                }
+            },
+            { $unwind: "$items" },
+            { $group: { _id: null, total: { $sum: "$items.quantity" } } }
+        ]);
+
+        const current = currentDishes[0]?.total || 0;
+        const last = lastDishes[0]?.total || 0;
+        
+        // Tính phần trăm thay đổi
+        let percentChange = 0;
+        if (last > 0) {
+            percentChange = ((current - last) / last) * 100;
+        } else if (current > 0) {
+            percentChange = 100;
+        }
+
+        res.status(200).json({ 
+            totalDishes: current,
+            percentChange: percentChange.toFixed(2)
+        });
     } catch (error) {
         res.status(500).json({ message: "Failed to calculate total dishes", error: error.message });
     }
 }
+
 const totalOrders = async (req, res) => {
     try {
-        const totalOrders = await Order.countDocuments();
-        res.status(200).json({ totalOrders });
+        // Số đơn hàng tháng hiện tại
+        const currentMonth = new Date();
+        const startOfCurrentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+        const endOfCurrentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+
+        // Số đơn hàng tháng trước
+        const lastMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1);
+        const endOfLastMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 0);
+
+        const currentOrders = await Order.countDocuments({
+            createdAt: { $gte: startOfCurrentMonth, $lte: endOfCurrentMonth }
+        });
+
+        const lastOrders = await Order.countDocuments({
+            createdAt: { $gte: lastMonth, $lte: endOfLastMonth }
+        });
+
+        // Tính phần trăm thay đổi
+        let percentChange = 0;
+        if (lastOrders > 0) {
+            percentChange = ((currentOrders - lastOrders) / lastOrders) * 100;
+        } else if (currentOrders > 0) {
+            percentChange = 100;
+        }
+
+        res.status(200).json({ 
+            totalOrders: currentOrders,
+            percentChange: percentChange.toFixed(2)
+        });
     } catch (error) {
         res.status(500).json({ message: "Failed to calculate total orders", error: error.message });
     }
 }
+
 const changeStatus = async (req, res) => {
     try {
         const { orderCode } = req.params;
@@ -87,6 +196,7 @@ const changeStatus = async (req, res) => {
         });
     }
 };
+
 const getOrder = async (req, res) => {
     try {
         const { orderCode } = req.params;
@@ -100,9 +210,6 @@ const getOrder = async (req, res) => {
         res.status(500).json({ message: "Failed to retrieve order", error: error.message });
     }
 }
-
-
-
 
 module.exports = {
     index,
