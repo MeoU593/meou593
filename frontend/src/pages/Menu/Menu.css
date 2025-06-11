@@ -1,7 +1,11 @@
+/* Menu.css - Updated for grid layout with ItemMenu */
 .container-menu {
   display: flex;
   flex-direction: column;
   width: 100%;
+  background: var(--Base-Dark-Bg-1, #252836);
+  min-height: 100vh;
+  padding-bottom: 40px;
 }
 
 .container-nav .nav-bar-menu div {
@@ -11,8 +15,29 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 600;
-  line-height: 140%; /* 19.6px */
+  line-height: 140%;
   cursor: pointer;
+  color: var(--Text-Light, #abbbc2);
+  transition: all 0.3s ease;
+}
+
+.container-nav .nav-bar-menu div:hover {
+  color: var(--Primary-Color, #EA7C69);
+}
+
+.container-nav .nav-bar-menu div.active-nav-pro-mana {
+  color: var(--Primary-Color, #EA7C69);
+}
+
+.container-nav .nav-bar-menu div.active-nav-pro-mana::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--Primary-Color, #EA7C69);
+  border-radius: 1px;
 }
 
 .container-menu .nav-bar-menu {
@@ -23,26 +48,33 @@
   align-items: center;
   justify-content: start;
   margin-left: 24px;
+  margin-right: 24px;
+  padding-top: 24px;
+  flex-wrap: wrap;
 }
 
+/* UPDATED: Grid layout cho content-menu */
 .container-menu .content-menu {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 28px;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px 32px; /* row-gap column-gap */
   margin-left: 24px;
+  margin-right: 24px;
+  justify-items: center; /* Center items trong grid cells */
+  align-items: start;
+  padding-top: 20px; /* Space cho circular images */
 }
 
 .container-menu .title-menu {
   margin-left: 24px;
   color: var(--White, #fff);
-  /* Heading/H2 */
   font-family: Barlow;
   font-size: 20px;
   font-style: normal;
   font-weight: 600;
-  line-height: 140%; /* 28px */
+  line-height: 140%;
   margin-bottom: 24px;
+  margin-top: 24px;
 }
 
 .container-menu .not-found {
@@ -50,9 +82,161 @@
   font-size: 16px;
   font-style: normal;
   font-weight: 600;
-  align-self: center;
   color: #8d91a0;
-  margin-top: 20%;
-  line-height: 140%; /* 28px */
-  margin-bottom: 24px;
+  text-align: center;
+  margin: 60px auto;
+  grid-column: 1 / -1; /* Span across all columns */
+  padding: 40px 20px;
+  background: var(--Base-Dark-Bg-2, #1f1d2b);
+  border-radius: 16px;
+  max-width: 400px;
+}
+
+/* Alternative grid layouts */
+.container-menu .content-menu.grid-fixed {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.container-menu .content-menu.grid-responsive {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+/* Loading state */
+.container-menu .loading-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px 32px;
+  margin-left: 24px;
+  margin-right: 24px;
+  justify-items: center;
+  padding-top: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1400px) {
+  .container-menu .content-menu {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px 24px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .container-menu .content-menu {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 900px) {
+  .container-menu .content-menu {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 20px;
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+  
+  .container-menu .nav-bar-menu {
+    margin-left: 16px;
+    margin-right: 16px;
+    gap: 20px;
+  }
+  
+  .container-menu .title-menu {
+    margin-left: 16px;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 600px) {
+  .container-menu .content-menu {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-left: 12px;
+    margin-right: 12px;
+  }
+  
+  .container-menu .nav-bar-menu {
+    margin-left: 12px;
+    margin-right: 12px;
+    gap: 16px;
+    justify-content: flex-start;
+  }
+  
+  .container-menu .nav-bar-menu div {
+    font-size: 13px;
+    padding-bottom: 10px;
+  }
+  
+  .container-menu .title-menu {
+    margin-left: 12px;
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .container-menu .not-found {
+    margin: 40px auto;
+    padding: 30px 16px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container-menu .content-menu {
+    margin-left: 8px;
+    margin-right: 8px;
+    gap: 12px;
+  }
+  
+  .container-menu .nav-bar-menu {
+    margin-left: 8px;
+    margin-right: 8px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  
+  .container-menu .title-menu {
+    margin-left: 8px;
+  }
+}
+
+/* Animation for new items */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.container-menu .content-menu .container-item-menu {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+/* Scroll behavior */
+.container-menu {
+  scroll-behavior: smooth;
+}
+
+/* Focus states for accessibility */
+.container-nav .nav-bar-menu div:focus {
+  outline: 2px solid var(--Primary-Color, #EA7C69);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Print styles */
+@media print {
+  .container-menu .nav-bar-menu,
+  .container-menu .title-menu {
+    display: none;
+  }
+  
+  .container-menu .content-menu {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 0;
+  }
 }

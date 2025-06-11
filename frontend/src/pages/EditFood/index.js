@@ -8,7 +8,7 @@ import { closeBackDrop, openBackDrop } from "../../redux/action";
 import { useSnackbar } from "../../components/SnackbarContext";
 
 function EditFood() {
-  const { slug } = useParams(); // lấy id của food qua tên miền
+  const { slug } = useParams();
   const [food, setFood] = useState({
     name: "",
     price: "",
@@ -16,6 +16,7 @@ function EditFood() {
     file: null,
     category: "",
   });
+  const [currentImage, setCurrentImage] = useState(""); // Để hiển thị ảnh hiện tại
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { showSnackbar } = useSnackbar();
@@ -23,12 +24,33 @@ function EditFood() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    
     try {
       dispatch(openBackDrop());
-      await api.patch(`admin/dish/edit/${slug}`, food);
+      
+      // Tạo FormData object để gửi file
+      const formData = new FormData();
+      formData.append('name', food.name);
+      formData.append('price', food.price);
+      formData.append('description', food.description);
+      formData.append('category', food.category);
+      
+      // Chỉ append file nếu user đã chọn file mới
+      if (food.file) {
+        formData.append('file', food.file);
+      }
+
+      // Gửi FormData thay vì JSON object
+      await api.patch(`admin/dish/edit/${slug}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
       navigate("/setting/product-manager");
-      showSnackbar("Cập nhật món ăn thành công")
-    } catch (e) {
+      showSnackbar("Cập nhật món ăn thành công");
+    } catch (error) {
+      console.error('Update error:', error);
       showSnackbar("Có lỗi xảy ra, vui lòng thử lại sau ít phút");
     }
     dispatch(closeBackDrop());
@@ -39,15 +61,26 @@ function EditFood() {
       try {
         dispatch(openBackDrop());
         const response = await api.get(`menu/detail/${slug}`);
-        setFood(response.data.dish);
-      } catch (e) {
-        showSnackbar("Có lỗi xảy ra, vui lòng đăng nhập và thử lại sau")
+        const dishData = response.data.dish;
+        
+        setFood({
+          name: dishData.name || "",
+          price: dishData.price || "",
+          description: dishData.description || "",
+          category: dishData.category || "",
+          file: null, // File luôn bắt đầu là null
+        });
+        
+        setCurrentImage(dishData.imageUrl || "");
+      } catch (error) {
+        console.error('Get dish error:', error);
+        showSnackbar("Có lỗi xảy ra, vui lòng đăng nhập và thử lại sau");
       }
       dispatch(closeBackDrop());
     }
 
     getDish();
-  }, [slug]);
+  }, [slug, dispatch, showSnackbar]);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -82,7 +115,7 @@ function EditFood() {
                 id="name-and-inp"
                 className="ui-inp"
                 name="name"
-                defaultValue={food.name}
+                value={food.name} // Thay đổi từ defaultValue thành value
                 type="text"
                 onChange={handleChange}
                 placeholder="Nhập tên thức ăn"
@@ -97,7 +130,7 @@ function EditFood() {
                 id="description-and-inp"
                 className="ui-inp"
                 name="description"
-                defaultValue={food.description}
+                value={food.description} // Thay đổi từ defaultValue thành value
                 onChange={handleChange}
                 placeholder="Nhập mô tả cho thức ăn"
                 required
@@ -110,7 +143,7 @@ function EditFood() {
                   id="price-and-inp"
                   className="ui-inp"
                   name="price"
-                  defaultValue={food.price}
+                  value={food.price} // Thay đổi từ defaultValue thành value
                   type="number"
                   step="0.01"
                   required
@@ -119,43 +152,58 @@ function EditFood() {
                 />
               </div>
               <div className="box-inp">
-              <InputLabel id="amount-and-inp" sx={{height: '18px', color: "white"}} ><Typography fontFamily='Barlow' fontSize='14px' fontWeight='500'>Loại thức ăn</Typography></InputLabel>
-              <Select
-                labelId="amount-and-inp"
-                id="amount-and-inp"
-                className="ui-inp"
-                sx={{height: '49.59px'}}
-                name="category"
-                value={food.category}
-                onChange={handleChange}
-                displayEmpty
-                required
-              >
-                <MenuItem value="">-- Chọn Loại Thức Ăn --</MenuItem>
-                <MenuItem value={"Main Course"}>Món chính</MenuItem>
-                <MenuItem value={"Dessert"}>Món tráng miệng</MenuItem>
-                <MenuItem value={"Drink"}>Thức uống</MenuItem>
-                <MenuItem value={"Appetizer"}>Món khai vị</MenuItem>
-              </Select>
+                <InputLabel id="amount-and-inp" sx={{height: '18px', color: "white"}}>
+                  <Typography fontFamily='Barlow' fontSize='14px' fontWeight='500'>
+                    Loại thức ăn
+                  </Typography>
+                </InputLabel>
+                <Select
+                  labelId="amount-and-inp"
+                  id="amount-and-inp"
+                  className="ui-inp"
+                  sx={{height: '49.59px'}}
+                  name="category"
+                  value={food.category}
+                  onChange={handleChange}
+                  displayEmpty
+                  required
+                >
+                  <MenuItem value="">-- Chọn Loại Thức Ăn --</MenuItem>
+                  <MenuItem value={"Main Course"}>Món chính</MenuItem>
+                  <MenuItem value={"Dessert"}>Món tráng miệng</MenuItem>
+                  <MenuItem value={"Drink"}>Thức uống</MenuItem>
+                  <MenuItem value={"Appetizer"}>Món khai vị</MenuItem>
+                </Select>
               </div>
             </div>
             <div className="box-inp">
               <div className="ui-inp image-inp">
                 <img src={ImageIcon} alt="Image" />
-                <p>Thêm ảnh</p>
+                <p>Thêm ảnh {currentImage && "(Ảnh hiện tại đã có)"}</p>
                 <label htmlFor="image-and-inp" className="custom-file-label">
-                  Duyệt file
+                  {food.file ? food.file.name : "Duyệt file"}
                 </label>
                 <input
                   placeholder=""
                   id="image-and-inp"
                   className="file-input"
-                  required
                   name="file"
                   onChange={handleChange}
                   type="file"
+                  accept="image/*" // Chỉ cho phép chọn file ảnh
                 />
               </div>
+              {/* Hiển thị ảnh hiện tại nếu có */}
+              {currentImage && (
+                <div style={{ marginTop: '10px' }}>
+                  <img 
+                    src={currentImage} 
+                    alt="Current dish" 
+                    style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '8px' }}
+                  />
+                  <p style={{ fontSize: '12px', color: '#abbbc2' }}>Ảnh hiện tại</p>
+                </div>
+              )}
             </div>
             <div className="group-btn group-btn-ui">
               <button

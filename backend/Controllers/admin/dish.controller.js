@@ -91,8 +91,7 @@ const updateDish = async (req, res) => {
         const slugDish = req.params.slugDish;
         const updateInf = req.body;
 
-        // console.log(slugDish)
-
+        // Tìm món ăn hiện tại
         const existingDish = await Dish.findOne({
             slug: slugDish,
             deleted: false,
@@ -104,15 +103,22 @@ const updateDish = async (req, res) => {
             });
         }
 
-        const updatedDish = await Dish.findOneAndUpdate(
-            { slug : slugDish },
-            { $set: updateInf },
-            { new: true, fields: '-name' }
-        );
+        // Cập nhật thông tin
+        Object.keys(updateInf).forEach(key => {
+            if (updateInf[key] !== undefined && updateInf[key] !== null && updateInf[key] !== '') {
+                existingDish[key] = updateInf[key];
+            }
+        });
+
+        // Sử dụng save() thay vì findOneAndUpdate để trigger middleware
+        const updatedDish = await existingDish.save();
 
         res.status(200).json({
             message: "Cập nhật món ăn thành công!",
-            dish: updatedDish,
+            dish: {
+                ...updatedDish.toObject(),
+                name: undefined // Loại bỏ name khỏi response như logic cũ
+            },
         });
     } catch (error) {
         res.status(400).json({

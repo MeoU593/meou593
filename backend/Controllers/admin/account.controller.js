@@ -151,26 +151,29 @@ const login = async (req, res) => {
 }
 const updateAccount = async (req, res) => {
     try {
-        const id = req.user.id
-        const updateIn4 = req.body
+        // Nhận accountId từ body để admin có thể sửa tài khoản khác
+        const id = req.body.accountId || req.user.id;
+        const updateIn4 = { ...req.body };
+        delete updateIn4.accountId; // Xóa accountId khỏi data update
 
         const data = await User.updateOne({
-            _id : id
+            _id: id
         }, {
-            $set : updateIn4
-        })
+            $set: updateIn4
+        });
+
         const updatedUser = await User.findOne({ _id: id }).select("-password");
         res.status(200).json({
-            message : "Cập nhật thông tin thành công!",
-            user : updatedUser
-        })
+            message: "Cập nhật thông tin thành công!",
+            user: updatedUser
+        });
     } catch (error) {
         res.status(500).json({
-            message : "Error!",
-            error : error.message
-        })
-    } 
-}
+            message: "Error!",
+            error: error.message
+        });
+    }
+};
 const deleteAccount = async (req, res) => {
     try {
         const accountId = req.params.id; // Lấy ID từ URL

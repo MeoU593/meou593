@@ -115,70 +115,76 @@ function AccountManagement() {
   }
 
   // Cập nhật tài khoản
-  async function updateAccount() {
-    try {
-      // Validation cơ bản
-      if (!editUser.fullname.trim()) {
-        showSnackbar("Vui lòng nhập họ và tên");
-        return;
-      }
-      if (!editUser.email.trim()) {
-        showSnackbar("Vui lòng nhập email");
-        return;
-      }
-      if (!editUser.phone.trim()) {
-        showSnackbar("Vui lòng nhập số điện thoại");
-        return;
-      }
-      if (!editUser.role) {
-        showSnackbar("Vui lòng chọn role");
-        return;
-      }
+ // Fix API endpoints trong component AccountManagement
 
-      dispatch(openBackDrop());
-      
-      // Gọi API cập nhật
-      await api.put(`admin/accounts/${selectedAccount._id}`, editUser);
-      
-      showSnackbar("Cập nhật tài khoản thành công");
-      setEditDialogOpen(false);
-      
-      // Reset form
-      setEditUser({
-        fullname: "",
-        phone: "",
-        email: "",
-        address: "",
-        role: "",
-      });
-      
-      // Reload danh sách
-      fetchAccounts();
-      
-    } catch (error) {
-      console.error("Update error:", error);
-      
-      if (error.response?.status === 400) {
-        showSnackbar(error.response.data.message || "Email đã được sử dụng");
-      } else if (error.response?.status === 404) {
-        showSnackbar("Tài khoản không tồn tại");
-      } else if (error.response?.status === 403) {
-        showSnackbar("Bạn không có quyền thực hiện thao tác này");
-      } else {
-        showSnackbar("Lỗi khi cập nhật tài khoản");
-      }
-    } finally {
-      dispatch(closeBackDrop());
+// 1. Fix updateAccount function
+async function updateAccount() {
+  try {
+    // Validation cơ bản
+    if (!editUser.fullname.trim()) {
+      showSnackbar("Vui lòng nhập họ và tên");
+      return;
     }
-  }
+    if (!editUser.email.trim()) {
+      showSnackbar("Vui lòng nhập email");
+      return;
+    }
+    if (!editUser.phone.trim()) {
+      showSnackbar("Vui lòng nhập số điện thoại");
+      return;
+    }
+    if (!editUser.role) {
+      showSnackbar("Vui lòng chọn role");
+      return;
+    }
 
-  // Xóa tài khoản
+    dispatch(openBackDrop());
+    
+    // FIX: Sử dụng đúng endpoint từ backend
+    await api.patch(`admin/accounts/edit`, {
+      accountId: selectedAccount._id,
+      ...editUser
+    });
+    
+    showSnackbar("Cập nhật tài khoản thành công");
+    setEditDialogOpen(false);
+    
+    // Reset form
+    setEditUser({
+      fullname: "",
+      phone: "",
+      email: "",
+      address: "",
+      role: "",
+    });
+    
+    // Reload danh sách
+    fetchAccounts();
+    
+  } catch (error) {
+    console.error("Update error:", error);
+    
+    if (error.response?.status === 400) {
+      showSnackbar(error.response.data.message || "Email đã được sử dụng");
+    } else if (error.response?.status === 404) {
+      showSnackbar("Tài khoản không tồn tại");
+    } else if (error.response?.status === 403) {
+      showSnackbar("Bạn không có quyền thực hiện thao tác này");
+    } else {
+      showSnackbar("Lỗi khi cập nhật tài khoản");
+    }
+  } finally {
+    dispatch(closeBackDrop());
+  }
+}
+
+  // 2. Fix deleteAccount function
   async function deleteAccount() {
     try {
       dispatch(openBackDrop());
       
-      // Gọi API xóa
-      await api.delete(`admin/accounts/${selectedAccount._id}`);
+      // FIX: Sử dụng đúng endpoint từ backend
+      await api.delete(`admin/accounts/delete/${selectedAccount._id}`);
       
       showSnackbar("Xóa tài khoản thành công");
       setDeleteDialogOpen(false);
